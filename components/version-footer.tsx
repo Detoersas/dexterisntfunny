@@ -1,97 +1,120 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Zap, Terminal, ShieldCheck } from "lucide-react";
 
 export function VersionFooter() {
   const [version, setVersion] = useState("0.0.0");
   const [buildId, setBuildId] = useState(0);
 
   useEffect(() => {
-    // Generates a random version number (e.g., 70.25.999)
     const major = Math.floor(Math.random() * 99) + 1;
     const minor = Math.floor(Math.random() * 99);
     const patch = Math.floor(Math.random() * 999);
-
-    // Generates a random Build ID through 1,000,000
-    const randomBuild = Math.floor(Math.random() * 1000000) + 1;
-
     setVersion(`${major}.${minor}.${patch}`);
-    setBuildId(randomBuild);
+    setBuildId(Math.floor(Math.random() * 1000000) + 1);
   }, []);
 
   return (
-    <footer className="relative mt-auto overflow-hidden border-t border-slate-800/80 bg-slate-950/95">
-      {/* Background glow / grid */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -left-32 top-0 h-40 w-40 rounded-full bg-cyan-500/20 blur-3xl" />
-        <div className="absolute right-[-4rem] bottom-[-3rem] h-52 w-52 rounded-full bg-sky-500/15 blur-3xl" />
-        <div className="h-px w-full bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent opacity-60" />
-      </div>
+    <>
+      <style>{`
+        .gb-footer {
+          font-family: 'DM Sans', sans-serif;
+          position: relative;
+          border-top: 0.5px solid rgba(200,169,110,0.15);
+          background: #080810;
+          overflow: hidden;
+        }
+        .gb-footer::before {
+          content: '';
+          position: absolute; top: 0; left: 0; right: 0;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(200,169,110,0.3), transparent);
+        }
+        .gb-footer-inner {
+          max-width: 1400px; margin: 0 auto;
+          padding: 3rem;
+          display: flex; align-items: center; justify-content: space-between;
+          flex-wrap: wrap; gap: 2rem;
+        }
+        .gb-footer-brand {
+          font-family: 'Playfair Display', serif;
+          font-size: 20px; font-weight: 900;
+          letter-spacing: 0.15em; text-transform: uppercase;
+          color: #f0ede8;
+        }
+        .gb-footer-brand span { color: #c8a96e; }
+        .gb-footer-tagline {
+          font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
+          color: #7a7a8c; margin-top: 4px;
+        }
+        .gb-footer-stats {
+          display: flex; align-items: center; gap: 3rem;
+        }
+        .gb-footer-stat-label {
+          font-family: 'DM Mono', monospace;
+          font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+          color: #7a7a8c; margin-bottom: 6px;
+        }
+        .gb-footer-stat-value {
+          font-family: 'DM Mono', monospace;
+          font-size: 13px; color: #c8a96e; letter-spacing: 0.1em;
+        }
+        .gb-footer-status {
+          display: inline-flex; align-items: center; gap: 6px;
+          font-family: 'DM Mono', monospace;
+          font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+          color: #6ee7b7;
+          border: 0.5px solid rgba(110,231,183,0.3);
+          background: rgba(110,231,183,0.06);
+          padding: 4px 10px; border-radius: 100px;
+        }
+        .gb-footer-status::before {
+          content: '';
+          width: 6px; height: 6px; border-radius: 50%;
+          background: #6ee7b7;
+          box-shadow: 0 0 6px rgba(110,231,183,0.7);
+        }
+        .gb-footer-bottom {
+          border-top: 0.5px solid rgba(200,169,110,0.08);
+          padding: 1.25rem 3rem;
+          max-width: 1400px; margin: 0 auto;
+          display: flex; align-items: center; justify-content: space-between;
+          flex-wrap: wrap; gap: 1rem;
+        }
+        .gb-footer-copy {
+          font-family: 'DM Mono', monospace;
+          font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+          color: #7a7a8c; opacity: 0.5;
+        }
+      `}</style>
 
-      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-7">
-        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          {/* Brand / description */}
-          <div className="flex flex-col items-center gap-2 text-center md:items-start md:text-left">
-            <div className="inline-flex items-center gap-2 rounded-full border border-slate-800/80 bg-slate-900/80 px-2.5 py-1 shadow-[0_0_18px_rgba(15,23,42,0.9)]">
-              <div className="relative flex h-6 w-6 items-center justify-center rounded-xl bg-slate-950">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_0_0,#22d3ee44,transparent_55%)]" />
-                <Zap className="relative h-3.5 w-3.5 text-cyan-300" />
-              </div>
-              <span className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-300">
-                game
-                <span className="bg-gradient-to-r from-cyan-400 to-sky-300 bg-clip-text text-transparent">
-                  boys
-                </span>
-                repo
-              </span>
-            </div>
-
-            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
-              Gateway to games • proxies • apps
-            </p>
+      <footer className="gb-footer">
+        <div className="gb-footer-inner">
+          <div>
+            <div className="gb-footer-brand">Game<span>Boys</span></div>
+            <div className="gb-footer-tagline">Gateway to games · proxies · apps</div>
           </div>
-
-          {/* Diagnostics */}
-          <div className="flex flex-wrap justify-center gap-4 text-xs md:justify-end md:gap-6">
-            <div className="flex flex-col items-center md:items-end">
-              <span className="mb-1 flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-cyan-300">
-                <Terminal className="h-3 w-3" />
-                System status
-              </span>
-              <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-300 border border-emerald-500/40">
-                Engine stable
-              </span>
+          <div className="gb-footer-stats">
+            <div>
+              <div className="gb-footer-stat-label">Build ID</div>
+              <div className="gb-footer-stat-value">#{buildId.toLocaleString()}</div>
             </div>
-
-            <div className="flex flex-col items-center md:items-end">
-              <span className="mb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">
-                Build ID
-              </span>
-              <span className="rounded-md bg-slate-900/80 px-2 py-0.5 text-[11px] font-mono font-bold tracking-wide text-cyan-300 shadow-[0_0_18px_rgba(34,211,238,0.5)]">
-                #{buildId.toLocaleString()}
-              </span>
+            <div>
+              <div className="gb-footer-stat-label">Firmware</div>
+              <div className="gb-footer-stat-value">v.{version}</div>
             </div>
-
-            <div className="flex flex-col items-center md:items-end">
-              <span className="mb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">
-                Firmware
-              </span>
-              <div className="inline-flex items-center gap-2 rounded-full border border-slate-700/80 bg-slate-900/80 px-2.5 py-0.5">
-                <span className="text-[11px] font-mono font-black text-slate-100">v.{version}</span>
-                <ShieldCheck className="h-3.5 w-3.5 text-cyan-400" />
-              </div>
+            <div>
+              <div className="gb-footer-stat-label">System</div>
+              <div className="gb-footer-status">Engine Stable</div>
             </div>
           </div>
         </div>
-
-        {/* Bottom row */}
-        <div className="mt-5 border-t border-slate-800/80 pt-3">
-          <p className="text-center text-[10px] font-medium uppercase tracking-[0.24em] text-slate-500 md:text-left">
-            &copy; {new Date().getFullYear()} Gameboys Network · All encrypted protocols active.
+        <div className="gb-footer-bottom">
+          <p className="gb-footer-copy">
+            © {new Date().getFullYear()} Gameboys Network · All encrypted protocols active.
           </p>
         </div>
-      </div>
-    </footer>
+      </footer>
+    </>
   );
 }
