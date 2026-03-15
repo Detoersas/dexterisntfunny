@@ -1,10 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Navbar } from "@/components/navbar";
 import { VersionFooter } from "@/components/version-footer";
-import { Star } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 
 const games = [
   { name: "archive games", url: "https://thebasicss.vercel.app", description: "my own selection of games", category: "Premium", hot: true },
@@ -36,23 +34,6 @@ const categories = ["All", "Premium", "Classic", "New", "Sports", "Retro", "Indi
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
-  const [engineStatus, setEngineStatus] = useState<"STABLE" | "UNSTABLE">("STABLE");
-  const [showTerms, setShowTerms] = useState(true);
-  const [clicks, setClicks] = useState<{ id: number; x: number; y: number }[]>([]);
-
-  useEffect(() => {
-    setEngineStatus(Math.random() < 0.5 ? "STABLE" : "UNSTABLE");
-  }, []);
-
-  useEffect(() => {
-    const handleGlobalClick = (e: MouseEvent) => {
-      const newClick = { id: Date.now(), x: e.clientX, y: e.clientY };
-      setClicks((prev) => [...prev, newClick]);
-      setTimeout(() => setClicks((prev) => prev.filter((c) => c.id !== newClick.id)), 600);
-    };
-    window.addEventListener("click", handleGlobalClick);
-    return () => window.removeEventListener("click", handleGlobalClick);
-  }, []);
 
   const filteredGames = games.filter((game) => {
     const q = searchQuery.toLowerCase();
@@ -89,51 +70,6 @@ export default function HomePage() {
           background: radial-gradient(ellipse, rgba(200,169,110,0.05) 0%, transparent 70%);
           pointer-events: none; z-index: 0;
         }
-        .gb-trail { pointer-events: none; position: fixed; inset: 0; z-index: 5; }
-        .gb-overlay {
-          position: fixed; inset: 0; z-index: 50;
-          display: flex; align-items: center; justify-content: center;
-          background: rgba(0,0,0,0.75); backdrop-filter: blur(16px);
-        }
-        .gb-modal {
-          width: 95%; max-width: 500px;
-          background: rgba(8,8,16,0.95);
-          border: 0.5px solid rgba(200,169,110,0.2);
-          border-radius: 24px;
-          padding: 2.5rem;
-        }
-        .gb-modal-eyebrow {
-          font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
-          color: #c8a96e; margin-bottom: 0.5rem;
-        }
-        .gb-modal h2 {
-          font-family: 'Playfair Display', serif;
-          font-size: 2rem; font-weight: 900;
-          color: #f0ede8; margin-bottom: 1.5rem;
-        }
-        .gb-modal-body {
-          font-size: 13px; line-height: 1.7; color: #7a7a8c;
-          max-height: 40vh; overflow-y: auto; margin-bottom: 2rem;
-        }
-        .gb-modal-body strong {
-          color: #c8a96e; display: block;
-          margin-top: 1rem; margin-bottom: 0.25rem;
-          font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
-        }
-        .gb-modal-actions {
-          display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-        }
-        .gb-enter-btn {
-          font-family: 'DM Sans', sans-serif;
-          font-size: 11px; font-weight: 700;
-          letter-spacing: 0.2em; text-transform: uppercase;
-          color: #080810; background: #c8a96e;
-          border: none; border-radius: 100px;
-          padding: 10px 28px; cursor: pointer;
-          transition: background 0.2s;
-        }
-        .gb-enter-btn:hover { background: #e8c87e; }
-        .gb-modal-hint { font-size: 10px; color: #7a7a8c; }
         .gb-hero {
           position: relative; z-index: 1;
           padding: 9rem 3rem 4rem;
@@ -172,17 +108,6 @@ export default function HomePage() {
           color: #c8a96e; font-size: 24px; font-weight: 400;
           margin-right: 4px; vertical-align: middle;
         }
-        .gb-divider { width: 1px; height: 32px; background: rgba(200,169,110,0.3); }
-        .gb-engine {
-          display: flex; align-items: center; gap: 8px;
-          font-family: 'DM Mono', monospace;
-          font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
-        }
-        .gb-engine-dot { width: 8px; height: 8px; border-radius: 50%; }
-        .gb-engine-dot.stable { background: #6ee7b7; box-shadow: 0 0 8px rgba(110,231,183,0.6); }
-        .gb-engine-dot.unstable { background: #f87171; box-shadow: 0 0 8px rgba(248,113,113,0.6); animation: gbPulse 1s infinite; }
-        .gb-engine-label.stable { color: #6ee7b7; }
-        .gb-engine-label.unstable { color: #f87171; }
         .gb-line {
           position: relative; z-index: 1;
           margin: 0 3rem; height: 0.5px;
@@ -333,79 +258,11 @@ export default function HomePage() {
           from { opacity: 0; }
           to   { opacity: 1; }
         }
-        @keyframes gbPulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.4; }
-        }
       `}</style>
 
       <div className="gb-root">
-
-        {/* CLICK TRAIL */}
-        <div className="gb-trail">
-          <AnimatePresence>
-            {clicks.map((click) => (
-              <motion.div
-                key={click.id}
-                initial={{ opacity: 0.7, scale: 0.2, y: 0 }}
-                animate={{ opacity: 0, scale: 1.5, y: -40 }}
-                exit={{ opacity: 0 }}
-                style={{ left: click.x - 10, top: click.y - 10, position: "absolute" }}
-              >
-                <Star size={18} fill="#c8a96e" color="#c8a96e" />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-
-        {/* TERMS OVERLAY */}
-        <AnimatePresence>
-          {showTerms && (
-            <motion.div
-              className="gb-overlay"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <motion.div
-                className="gb-modal"
-                initial={{ scale: 0.92, opacity: 0, y: 16 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.92, opacity: 0, y: 16 }}
-              >
-                <p className="gb-modal-eyebrow">System Notice</p>
-                <h2>Access Conditions</h2>
-                <div className="gb-modal-body">
-                  <strong>Disclaimer</strong>
-                  This portal is designed for independent use only. By continuing, you acknowledge
-                  that you are responsible for how and where you access this content.
-                  <strong>Usage Restrictions</strong>
-                  Do not present or distribute this portal in environments where it is not allowed.
-                  Always follow your local rules and guidelines.
-                  <strong>Responsibility</strong>
-                  You assume full responsibility for any consequences that may occur if these
-                  conditions are ignored.
-                  <strong>Agreement</strong>
-                  By selecting "Enter Site", you confirm that you understand and agree to these
-                  conditions.
-                </div>
-                <div className="gb-modal-actions">
-                  <button
-                    className="gb-enter-btn"
-                    onClick={() => setShowTerms(false)}
-                  >
-                    Enter Site
-                  </button>
-                  <span className="gb-modal-hint">If you disagree, close this tab.</span>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         <Navbar onSearch={setSearchQuery} searchQuery={searchQuery} />
 
-        {/* HERO */}
         <section className="gb-hero">
           <p className="gb-eyebrow">Game Hub</p>
           <h1 className="gb-title">
@@ -417,25 +274,17 @@ export default function HomePage() {
               <strong>{filteredGames.length}</strong>
               {filteredGames.length !== 1 ? " games available" : " game available"}
             </div>
-            <div className="gb-divider" />
-            <div className="gb-engine">
-              <span className={`gb-engine-dot ${engineStatus === "STABLE" ? "stable" : "unstable"}`} />
-              <span className={`gb-engine-label ${engineStatus === "STABLE" ? "stable" : "unstable"}`}>
-                Engine {engineStatus}
-              </span>
-            </div>
           </div>
         </section>
 
         <div className="gb-line" />
 
-        {/* FILTERS */}
         <div className="gb-filters">
           <span className="gb-filter-label">Filter</span>
           {categories.map((cat) => (
             <button
               key={cat}
-              className={`gb-filter-btn ${activeCategory === cat ? "active" : ""}`}
+              className={`gb-filter-btn${activeCategory === cat ? " active" : ""}`}
               onClick={() => setActiveCategory(cat)}
             >
               {cat}
@@ -443,7 +292,6 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* GRID */}
         {filteredGames.length > 0 ? (
           <div className="gb-grid">
             {filteredGames.map((game, i) => (
@@ -480,7 +328,6 @@ export default function HomePage() {
         )}
 
         <VersionFooter />
-
       </div>
     </>
   );
