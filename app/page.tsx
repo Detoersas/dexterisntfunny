@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/navbar";
 import { VersionFooter } from "@/components/version-footer";
-import { Cpu, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const games = [
@@ -38,8 +38,6 @@ export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [engineStatus, setEngineStatus] = useState<"STABLE" | "UNSTABLE">("STABLE");
   const [showTerms, setShowTerms] = useState(true);
-  const [searching, setSearching] = useState(false);
-  const [timeUnlocked, setTimeUnlocked] = useState(false);
   const [clicks, setClicks] = useState<{ id: number; x: number; y: number }[]>([]);
 
   useEffect(() => {
@@ -56,24 +54,6 @@ export default function HomePage() {
     return () => window.removeEventListener("click", handleGlobalClick);
   }, []);
 
-  useEffect(() => {
-    const checkUnlock = () => {
-      const now = new Date();
-      const parts = new Intl.DateTimeFormat("en-US", {
-        timeZone: "America/New_York",
-        hour12: false,
-        hour: "2-digit",
-        minute: "2-digit",
-      }).formatToParts(now);
-      const hour = parseInt(parts.find((p) => p.type === "hour")?.value ?? "0", 10);
-      const minute = parseInt(parts.find((p) => p.type === "minute")?.value ?? "0", 10);
-      setTimeUnlocked(hour > 10 || (hour === 10 && minute >= 45));
-    };
-    checkUnlock();
-    const interval = setInterval(checkUnlock, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
   const filteredGames = games.filter((game) => {
     const q = searchQuery.toLowerCase();
     const matchesSearch =
@@ -87,8 +67,6 @@ export default function HomePage() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap');
-
         .gb-root {
           font-family: 'DM Sans', sans-serif;
           background: #080810;
@@ -156,11 +134,6 @@ export default function HomePage() {
         }
         .gb-enter-btn:hover { background: #e8c87e; }
         .gb-modal-hint { font-size: 10px; color: #7a7a8c; }
-        .gb-scan-bar {
-          height: 4px; width: 100%;
-          background: rgba(255,255,255,0.06);
-          border-radius: 100px; overflow: hidden; margin-top: 1rem;
-        }
         .gb-hero {
           position: relative; z-index: 1;
           padding: 9rem 3rem 4rem;
@@ -259,15 +232,15 @@ export default function HomePage() {
           opacity: 0; transform: translateY(20px);
           transition: background 0.4s ease;
         }
-        .gb-card:nth-child(1)  { animation: gbFadeUp 0.5s ease forwards 0.80s; }
-        .gb-card:nth-child(2)  { animation: gbFadeUp 0.5s ease forwards 0.85s; }
-        .gb-card:nth-child(3)  { animation: gbFadeUp 0.5s ease forwards 0.90s; }
-        .gb-card:nth-child(4)  { animation: gbFadeUp 0.5s ease forwards 0.95s; }
-        .gb-card:nth-child(5)  { animation: gbFadeUp 0.5s ease forwards 1.00s; }
-        .gb-card:nth-child(6)  { animation: gbFadeUp 0.5s ease forwards 1.05s; }
-        .gb-card:nth-child(7)  { animation: gbFadeUp 0.5s ease forwards 1.10s; }
-        .gb-card:nth-child(8)  { animation: gbFadeUp 0.5s ease forwards 1.15s; }
-        .gb-card:nth-child(9)  { animation: gbFadeUp 0.5s ease forwards 1.20s; }
+        .gb-card:nth-child(1)    { animation: gbFadeUp 0.5s ease forwards 0.80s; }
+        .gb-card:nth-child(2)    { animation: gbFadeUp 0.5s ease forwards 0.85s; }
+        .gb-card:nth-child(3)    { animation: gbFadeUp 0.5s ease forwards 0.90s; }
+        .gb-card:nth-child(4)    { animation: gbFadeUp 0.5s ease forwards 0.95s; }
+        .gb-card:nth-child(5)    { animation: gbFadeUp 0.5s ease forwards 1.00s; }
+        .gb-card:nth-child(6)    { animation: gbFadeUp 0.5s ease forwards 1.05s; }
+        .gb-card:nth-child(7)    { animation: gbFadeUp 0.5s ease forwards 1.10s; }
+        .gb-card:nth-child(8)    { animation: gbFadeUp 0.5s ease forwards 1.15s; }
+        .gb-card:nth-child(9)    { animation: gbFadeUp 0.5s ease forwards 1.20s; }
         .gb-card:nth-child(n+10) { animation: gbFadeUp 0.5s ease forwards 1.25s; }
         .gb-card::before {
           content: '';
@@ -352,29 +325,6 @@ export default function HomePage() {
           font-size: 2rem; color: #7a7a8c; margin-bottom: 0.5rem;
         }
         .gb-empty-sub { font-size: 13px; color: #7a7a8c; opacity: 0.5; }
-        .gb-locked {
-          position: relative; z-index: 1;
-          min-height: 100vh;
-          display: flex; flex-direction: column;
-          align-items: center; justify-content: center;
-          text-align: center; padding: 2rem;
-        }
-        .gb-locked-eyebrow {
-          font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
-          color: #c8a96e; margin-bottom: 1.5rem;
-          display: flex; align-items: center; gap: 10px;
-        }
-        .gb-locked-title {
-          font-family: 'Playfair Display', serif;
-          font-size: clamp(2.5rem, 6vw, 4.5rem);
-          font-weight: 900; line-height: 1.05;
-          color: #f0ede8; margin-bottom: 1rem;
-        }
-        .gb-locked-title span { color: #c8a96e; }
-        .gb-locked-desc {
-          font-size: 14px; color: #7a7a8c;
-          max-width: 400px; line-height: 1.7; margin-bottom: 2rem;
-        }
         @keyframes gbFadeUp {
           from { opacity: 0; transform: translateY(20px); }
           to   { opacity: 1; transform: translateY(0); }
@@ -386,15 +336,6 @@ export default function HomePage() {
         @keyframes gbPulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.4; }
-        }
-        @keyframes gbScan {
-          0%   { transform: translateX(-100%); }
-          100% { transform: translateX(400%); }
-        }
-        .gb-scan-inner {
-          height: 100%; width: 25%; border-radius: 100px;
-          background: linear-gradient(90deg, transparent, #c8a96e, transparent);
-          animation: gbScan 1.4s ease-in-out infinite;
         }
       `}</style>
 
@@ -451,11 +392,7 @@ export default function HomePage() {
                 <div className="gb-modal-actions">
                   <button
                     className="gb-enter-btn"
-                    onClick={() => {
-                      setShowTerms(false);
-                      setSearching(true);
-                      setTimeout(() => setSearching(false), 4000);
-                    }}
+                    onClick={() => setShowTerms(false)}
                   >
                     Enter Site
                   </button>
@@ -466,136 +403,83 @@ export default function HomePage() {
           )}
         </AnimatePresence>
 
-        {/* SCANNING OVERLAY */}
-        <AnimatePresence>
-          {searching && (
-            <motion.div
-              className="gb-overlay"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <motion.div
-                className="gb-modal"
-                initial={{ scale: 0.92, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.92, opacity: 0 }}
-              >
-                <p className="gb-modal-eyebrow">Checking IP status</p>
-                <h2>Scanning…</h2>
-                <p style={{ fontSize: 13, color: "#7a7a8c", marginBottom: "1.5rem", lineHeight: 1.7 }}>
-                  Checking to see if you are in school zones across the USA.
-                </p>
-                <div className="gb-scan-bar">
-                  <div className="gb-scan-inner" />
-                </div>
-                <p style={{ fontSize: 10, color: "#7a7a8c", marginTop: "1rem", letterSpacing: "0.1em" }}>
-                  Do not close this tab
-                </p>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <Navbar onSearch={setSearchQuery} searchQuery={searchQuery} />
 
-        {timeUnlocked ? (
-          <>
-            <Navbar onSearch={setSearchQuery} searchQuery={searchQuery} />
-
-            {/* HERO */}
-            <section className="gb-hero">
-              <p className="gb-eyebrow">Game Hub</p>
-              <h1 className="gb-title">
-                <span className="solid">Game</span>
-                <span className="outline">Boys</span>
-              </h1>
-              <div className="gb-meta">
-                <div className="gb-count">
-                  <strong>{filteredGames.length}</strong>
-                  {filteredGames.length !== 1 ? " games available" : " game available"}
-                </div>
-                <div className="gb-divider" />
-                <div className="gb-engine">
-                  <span className={`gb-engine-dot ${engineStatus === "STABLE" ? "stable" : "unstable"}`} />
-                  <span className={`gb-engine-label ${engineStatus === "STABLE" ? "stable" : "unstable"}`}>
-                    Engine {engineStatus}
-                  </span>
-                </div>
-              </div>
-            </section>
-
-            <div className="gb-line" />
-
-            {/* FILTERS */}
-            <div className="gb-filters">
-              <span className="gb-filter-label">Filter</span>
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  className={`gb-filter-btn ${activeCategory === cat ? "active" : ""}`}
-                  onClick={() => setActiveCategory(cat)}
-                >
-                  {cat}
-                </button>
-              ))}
+        {/* HERO */}
+        <section className="gb-hero">
+          <p className="gb-eyebrow">Game Hub</p>
+          <h1 className="gb-title">
+            <span className="solid">Game</span>
+            <span className="outline">Boys</span>
+          </h1>
+          <div className="gb-meta">
+            <div className="gb-count">
+              <strong>{filteredGames.length}</strong>
+              {filteredGames.length !== 1 ? " games available" : " game available"}
             </div>
-
-            {/* GRID */}
-            {filteredGames.length > 0 ? (
-              <div className="gb-grid">
-                {filteredGames.map((game, i) => (
-                  
-                    key={game.name}
-                    href={game.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="gb-card"
-                  >
-                    <div className="gb-card-topline" />
-                    <div className="gb-card-header">
-                      <div className="gb-card-number">{pad(i + 1)}</div>
-                      <div className="gb-card-badges">
-                        {game.hot && <span className="gb-hot-badge">⚡ Hot</span>}
-                        <span className="gb-cat-badge">{game.category}</span>
-                      </div>
-                    </div>
-                    <h2 className="gb-card-name">{game.name}</h2>
-                    <p className="gb-card-desc">{game.description}</p>
-                    <div className="gb-card-footer">
-                      <span className="gb-card-play">▶ Play</span>
-                      <div className="gb-card-arrow">↗</div>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            ) : (
-              <div className="gb-empty">
-                <div className="gb-empty-icon">◎</div>
-                <h2 className="gb-empty-title">Nothing found</h2>
-                <p className="gb-empty-sub">Try a different search or filter</p>
-              </div>
-            )}
-
-            <VersionFooter />
-          </>
-        ) : (
-          <div className="gb-locked">
-            <p className="gb-locked-eyebrow">
-              <Cpu size={16} color="#c8a96e" /> Access Locked
-            </p>
-            <h1 className="gb-locked-title">
-              Portal opens at<br />
-              <span>3:45 PM Eastern</span>
-            </h1>
-            <p className="gb-locked-desc">
-              GameBoys services are offline until the scheduled window. The index, search,
-              and launch buttons will activate once the timer completes.
-            </p>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, color: "#7a7a8c", fontSize: 12 }}>
-              <Cpu size={14} color="#c8a96e" />
-              <span style={{ letterSpacing: "0.1em" }}>Waiting for boot sequence…</span>
+            <div className="gb-divider" />
+            <div className="gb-engine">
+              <span className={`gb-engine-dot ${engineStatus === "STABLE" ? "stable" : "unstable"}`} />
+              <span className={`gb-engine-label ${engineStatus === "STABLE" ? "stable" : "unstable"}`}>
+                Engine {engineStatus}
+              </span>
             </div>
           </div>
+        </section>
+
+        <div className="gb-line" />
+
+        {/* FILTERS */}
+        <div className="gb-filters">
+          <span className="gb-filter-label">Filter</span>
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              className={`gb-filter-btn ${activeCategory === cat ? "active" : ""}`}
+              onClick={() => setActiveCategory(cat)}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {/* GRID */}
+        {filteredGames.length > 0 ? (
+          <div className="gb-grid">
+            {filteredGames.map((game, i) => (
+              <a
+                key={game.name}
+                href={game.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="gb-card"
+              >
+                <div className="gb-card-topline" />
+                <div className="gb-card-header">
+                  <div className="gb-card-number">{pad(i + 1)}</div>
+                  <div className="gb-card-badges">
+                    {game.hot && <span className="gb-hot-badge">⚡ Hot</span>}
+                    <span className="gb-cat-badge">{game.category}</span>
+                  </div>
+                </div>
+                <h2 className="gb-card-name">{game.name}</h2>
+                <p className="gb-card-desc">{game.description}</p>
+                <div className="gb-card-footer">
+                  <span className="gb-card-play">▶ Play</span>
+                  <div className="gb-card-arrow">↗</div>
+                </div>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <div className="gb-empty">
+            <div className="gb-empty-icon">◎</div>
+            <h2 className="gb-empty-title">Nothing found</h2>
+            <p className="gb-empty-sub">Try a different search or filter</p>
+          </div>
         )}
+
+        <VersionFooter />
 
       </div>
     </>
