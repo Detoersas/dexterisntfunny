@@ -544,30 +544,30 @@ export default function HomePage() {
             {/* GRID */}
             {filteredGames.length > 0 ? (
               <div className="gb-grid">
-                {filteredGames.map((game, i) => (
-                  
-                    key={game.name}
-                    href={game.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="gb-card"
-                  >
-                    <div className="gb-card-topline" />
-                    <div className="gb-card-header">
-                      <div className="gb-card-number">{pad(i + 1)}</div>
-                      <div className="gb-card-badges">
-                        {game.hot && <span className="gb-hot-badge">⚡ Hot</span>}
-                        <span className="gb-cat-badge">{game.category}</span>
-                      </div>
+              {filteredGames.map((game, i) => (
+  
+                  key={game.name}
+                  href={game.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="gb-card"
+                >
+                  <div className="gb-card-topline" />
+                  <div className="gb-card-header">
+                    <div className="gb-card-number">{pad(i + 1)}</div>
+                    <div className="gb-card-badges">
+                      {game.hot && <span className="gb-hot-badge">⚡ Hot</span>}
+                      <span className="gb-cat-badge">{game.category}</span>
                     </div>
-                    <h2 className="gb-card-name">{game.name}</h2>
-                    <p className="gb-card-desc">{game.description}</p>
-                    <div className="gb-card-footer">
-                      <span className="gb-card-play">▶ Play</span>
-                      <div className="gb-card-arrow">↗</div>
-                    </div>
-                  </a>
-                ))}
+                  </div>
+                  <h2 className="gb-card-name">{game.name}</h2>
+                  <p className="gb-card-desc">{game.description}</p>
+                  <div className="gb-card-footer">
+                    <span className="gb-card-play">▶ Play</span>
+                    <div className="gb-card-arrow">↗</div>
+                  </div>
+                </a>
+              ))}
               </div>
             ) : (
               <div className="gb-empty">
