@@ -2,10 +2,9 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Gamepad2, Menu, X, Search, User, Zap } from "lucide-react";
+import { Gamepad2, Menu, X, Search, User } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import {
   DropdownMenu,
@@ -14,7 +13,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useLanguage } from "@/lib/language-context";
 
 export function Navbar({
   onSearch,
@@ -26,235 +24,308 @@ export function Navbar({
   const pathname = usePathname();
   const router = useRouter();
   const { user, signOut } = useAuth();
-  const { language, setLanguage, t } = useLanguage();
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    const controlNavbar = () => {
-      const currentScrollY = window.scrollY;
-
-      if (currentScrollY > 100) {
-        setIsScrolled(true);
-        setIsVisible(currentScrollY < lastScrollY);
-      } else {
-        setIsScrolled(false);
-        setIsVisible(true);
-      }
-
-      setLastScrollY(currentScrollY);
+    const onScroll = () => {
+      const y = window.scrollY;
+      setIsScrolled(y > 60);
+      setIsVisible(y < 60 || y < lastScrollY);
+      setLastScrollY(y);
     };
-
-    window.addEventListener("scroll", controlNavbar);
-    return () => window.removeEventListener("scroll", controlNavbar);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, [lastScrollY]);
 
-  // NAV ITEMS LIST
   const navLinks = [
-    { href: "/", icon: Gamepad2, label: "GAMES" },
-    { href: "/order", icon: Gamepad2, label: "view orders" },
-    { href: "/order/new", icon: Gamepad2, label: "make order" },
+    { href: "/", label: "Games" },
+    { href: "/order", label: "View Orders" },
+    { href: "/order/new", label: "Make Order" },
   ];
 
   return (
-    <motion.header
-      initial={{ y: 0 }}
-      animate={{ y: isVisible ? 0 : -110 }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300",
-        isScrolled
-          ? "border-slate-800/80 bg-slate-950/90 backdrop-blur-xl shadow-[0_8px_30px_rgba(15,23,42,0.9)]"
-          : "border-transparent bg-gradient-to-b from-slate-950/80 via-slate-950/60 to-transparent"
-      )}
-    >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between gap-4">
-          {/* LEFT: LOGO */}
-          <Link href="/" className="group flex items-center gap-3">
-            <div className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-2xl bg-slate-900 shadow-[0_0_20px_rgba(15,23,42,1)] ring-1 ring-cyan-400/40 group-hover:ring-cyan-300/80 group-hover:shadow-[0_0_28px_rgba(34,211,238,0.8)] transition-all">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_0_0,#22d3ee33,transparent_55%),radial-gradient(circle_at_100%_100%,#38bdf833,transparent_55%)]" />
-              <Zap className="relative h-5 w-5 text-cyan-300" />
-            </div>
-            <div className="hidden flex-col leading-tight sm:flex">
-              <span className="hidden text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">
-                Detoersas
-              </span>
-              <span className="text-xl font-black tracking-tight text-slate-50">
-                Game
-                <span className="bg-gradient-to-r from-cyan-400 to-sky-300 bg-clip-text text-transparent">
-                  Boys
-                </span>
-              </span>
-            </div>
+    <>
+      <style>{`
+        .gb-nav {
+          position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+          font-family: 'DM Sans', sans-serif;
+          transition: background 0.3s, border-color 0.3s;
+        }
+        .gb-nav.scrolled {
+          background: rgba(8,8,16,0.92);
+          backdrop-filter: blur(20px);
+          border-bottom: 0.5px solid rgba(200,169,110,0.15);
+        }
+        .gb-nav.top {
+          background: linear-gradient(to bottom, rgba(8,8,16,0.8), transparent);
+          border-bottom: 0.5px solid transparent;
+        }
+        .gb-nav-inner {
+          max-width: 1400px; margin: 0 auto;
+          padding: 0 3rem;
+          height: 72px;
+          display: flex; align-items: center; justify-content: space-between; gap: 2rem;
+        }
+        .gb-nav-logo {
+          font-family: 'Playfair Display', serif;
+          font-size: 22px; font-weight: 900;
+          letter-spacing: 0.15em; text-transform: uppercase;
+          color: #f0ede8; text-decoration: none;
+          flex-shrink: 0;
+        }
+        .gb-nav-logo span { color: #c8a96e; }
+        .gb-nav-search {
+          flex: 1; max-width: 400px;
+          display: flex; align-items: center; gap: 8px;
+          background: rgba(255,255,255,0.03);
+          border: 0.5px solid rgba(200,169,110,0.15);
+          border-radius: 100px; padding: 8px 16px;
+          transition: border-color 0.2s;
+        }
+        .gb-nav-search:focus-within { border-color: rgba(200,169,110,0.35); }
+        .gb-nav-search input {
+          background: none; border: none; outline: none;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 13px; color: #f0ede8; width: 100%;
+        }
+        .gb-nav-search input::placeholder { color: #7a7a8c; }
+        .gb-nav-links {
+          display: flex; align-items: center; gap: 0;
+          background: rgba(255,255,255,0.03);
+          border: 0.5px solid rgba(200,169,110,0.12);
+          border-radius: 100px; padding: 4px;
+        }
+        .gb-nav-link {
+          font-size: 10px; font-weight: 500;
+          letter-spacing: 0.18em; text-transform: uppercase;
+          padding: 6px 14px; border-radius: 100px;
+          color: #7a7a8c; text-decoration: none;
+          transition: all 0.2s;
+        }
+        .gb-nav-link:hover { color: #f0ede8; }
+        .gb-nav-link.active {
+          background: rgba(200,169,110,0.12);
+          border: 0.5px solid rgba(200,169,110,0.3);
+          color: #c8a96e;
+        }
+        .gb-nav-auth { display: flex; align-items: center; gap: 10px; }
+        .gb-nav-login {
+          font-size: 11px; font-weight: 500;
+          letter-spacing: 0.15em; text-transform: uppercase;
+          color: #7a7a8c; background: none; border: none; cursor: pointer;
+          transition: color 0.2s;
+        }
+        .gb-nav-login:hover { color: #f0ede8; }
+        .gb-nav-join {
+          font-size: 10px; font-weight: 700;
+          letter-spacing: 0.2em; text-transform: uppercase;
+          color: #080810; background: #c8a96e;
+          border: none; border-radius: 100px;
+          padding: 8px 18px; cursor: pointer;
+          transition: background 0.2s;
+        }
+        .gb-nav-join:hover { background: #e8c87e; }
+        .gb-nav-toggle {
+          display: none;
+          width: 36px; height: 36px;
+          align-items: center; justify-content: center;
+          border: 0.5px solid rgba(200,169,110,0.2);
+          border-radius: 50%; background: none; cursor: pointer;
+          color: #f0ede8; transition: border-color 0.2s;
+        }
+        .gb-nav-toggle:hover { border-color: rgba(200,169,110,0.4); }
+
+        /* MOBILE MENU */
+        .gb-mobile-menu {
+          background: rgba(8,8,16,0.97);
+          border-top: 0.5px solid rgba(200,169,110,0.1);
+          padding: 1.5rem 2rem;
+        }
+        .gb-mobile-search {
+          display: flex; align-items: center; gap: 8px;
+          background: rgba(255,255,255,0.03);
+          border: 0.5px solid rgba(200,169,110,0.15);
+          border-radius: 100px; padding: 8px 14px;
+          margin-bottom: 1rem;
+        }
+        .gb-mobile-search input {
+          background: none; border: none; outline: none;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 13px; color: #f0ede8; width: 100%;
+        }
+        .gb-mobile-search input::placeholder { color: #7a7a8c; }
+        .gb-mobile-link {
+          display: block;
+          font-size: 11px; font-weight: 500;
+          letter-spacing: 0.18em; text-transform: uppercase;
+          padding: 10px 12px; border-radius: 8px;
+          color: #7a7a8c; text-decoration: none;
+          transition: all 0.2s; margin-bottom: 4px;
+        }
+        .gb-mobile-link:hover { color: #f0ede8; background: rgba(255,255,255,0.03); }
+        .gb-mobile-link.active { color: #c8a96e; background: rgba(200,169,110,0.08); }
+        .gb-mobile-auth {
+          display: flex; gap: 8px; margin-top: 1rem;
+          padding-top: 1rem;
+          border-top: 0.5px solid rgba(200,169,110,0.1);
+        }
+        .gb-mobile-auth button {
+          flex: 1; font-family: 'DM Sans', sans-serif;
+          font-size: 10px; font-weight: 700;
+          letter-spacing: 0.18em; text-transform: uppercase;
+          padding: 9px; border-radius: 100px; cursor: pointer;
+        }
+
+        @media (max-width: 1024px) {
+          .gb-nav-links { display: none; }
+          .gb-nav-search { display: none; }
+          .gb-nav-toggle { display: flex; }
+          .gb-nav-auth { display: none; }
+          .gb-nav-inner { padding: 0 1.5rem; }
+        }
+      `}</style>
+
+      <motion.header
+        className={`gb-nav ${isScrolled ? "scrolled" : "top"}`}
+        animate={{ y: isVisible ? 0 : -80 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+      >
+        <div className="gb-nav-inner">
+          {/* Logo */}
+          <Link href="/" className="gb-nav-logo">
+            Game<span>Boys</span>
           </Link>
 
-          {/* CENTER: SEARCH (DESKTOP) */}
-          <div className="relative hidden flex-1 max-w-md md:block group">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 group-focus-within:text-cyan-400" />
+          {/* Search */}
+          <div className="gb-nav-search">
+            <Search size={14} color="#7a7a8c" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => onSearch?.(e.target.value)}
-              placeholder="Search games, mirrors, or orders…"
-              className="w-full rounded-full border border-slate-800 bg-slate-900/80 py-2 pl-10 pr-4 text-sm text-slate-50 placeholder:text-slate-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400/70 transition-all shadow-[0_0_18px_rgba(15,23,42,0.9)]"
+              placeholder="Search games…"
             />
           </div>
 
-          {/* RIGHT: NAV + AUTH + MOBILE TOGGLE */}
-          <nav className="flex items-center gap-3">
-            {/* DESKTOP LINKS */}
-            <div className="hidden items-center gap-1 rounded-full bg-slate-900/60 px-1.5 py-1 lg:flex border border-slate-800/80 shadow-[0_10px_30px_rgba(15,23,42,0.9)]">
-              {navLinks.map((item) => {
-                const isActive = pathname === item.href;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      "flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] transition-all",
-                      isActive
-                        ? "bg-cyan-500/20 text-cyan-100 shadow-[0_0_18px_rgba(34,211,238,0.45)] border border-cyan-400/60"
-                        : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/80 border border-transparent hover:border-cyan-400/40"
-                    )}
-                  >
-                    <item.icon className="h-3.5 w-3.5 text-cyan-300" />
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </div>
-
-            {/* AUTH */}
-            {user ? (
-              <UserMenu user={user} signOut={signOut} />
-            ) : (
-              <div className="hidden items-center gap-2 sm:flex">
-                <button
-                  onClick={() => router.push("/signin")}
-                  className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-300 hover:text-slate-50"
-                >
-                  Login
-                </button>
-                <button
-                  onClick={() => router.push("/signup")}
-                  className="rounded-full bg-gradient-to-r from-cyan-400 to-sky-400 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-slate-950 shadow-[0_0_22px_rgba(34,211,238,0.8)] hover:from-cyan-300 hover:to-sky-300 transition-colors"
-                >
-                  Join now
-                </button>
-              </div>
-            )}
-
-            {/* MOBILE MENU TOGGLE */}
-            <button
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-800 bg-slate-900/80 text-slate-100 hover:border-cyan-400/60 hover:text-cyan-200 lg:hidden transition-colors"
-              onClick={() => setMobileMenuOpen((open) => !open)}
-            >
-              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
+          {/* Nav links */}
+          <nav className="gb-nav-links">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`gb-nav-link ${pathname === link.href ? "active" : ""}`}
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
-        </div>
-      </div>
 
-      {/* MOBILE DROPDOWN */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden border-t border-slate-800 bg-slate-950/95 backdrop-blur-xl"
-          >
-            <div className="mx-auto max-w-7xl px-4 pb-4 pt-2 sm:px-6">
-              {/* Mobile search */}
-              <div className="relative mb-3 group">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 group-focus-within:text-cyan-400" />
+          {/* Auth */}
+          {user ? (
+            <UserMenu user={user} signOut={signOut} />
+          ) : (
+            <div className="gb-nav-auth">
+              <button className="gb-nav-login" onClick={() => router.push("/signin")}>Login</button>
+              <button className="gb-nav-join" onClick={() => router.push("/signup")}>Join</button>
+            </div>
+          )}
+
+          {/* Mobile toggle */}
+          <button className="gb-nav-toggle" onClick={() => setMobileOpen((o) => !o)}>
+            {mobileOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
+        </div>
+
+        {/* Mobile menu */}
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.div
+              className="gb-mobile-menu"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+            >
+              <div className="gb-mobile-search">
+                <Search size={14} color="#7a7a8c" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => onSearch?.(e.target.value)}
-                  placeholder="Search..."
-                  className="w-full rounded-full border border-slate-800 bg-slate-900/80 py-2 pl-10 pr-4 text-sm text-slate-50 placeholder:text-slate-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400/70 transition-all"
+                  placeholder="Search games…"
                 />
               </div>
-
-              <div className="space-y-1">
-                {navLinks.map((item) => {
-                  const isActive = pathname === item.href;
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={cn(
-                        "flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold tracking-wide transition-colors",
-                        isActive
-                          ? "bg-cyan-500/20 text-cyan-100 border border-cyan-400/60"
-                          : "text-slate-200 hover:bg-slate-900/80 border border-transparent hover:border-cyan-400/40"
-                      )}
-                    >
-                      <item.icon className="h-5 w-5 text-cyan-300" />
-                      <span className="uppercase text-[11px] tracking-[0.14em]">{item.label}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`gb-mobile-link ${pathname === link.href ? "active" : ""}`}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
               {!user && (
-                <div className="mt-4 flex gap-2">
+                <div className="gb-mobile-auth">
                   <button
-                    onClick={() => {
-                      router.push("/signin");
-                      setMobileMenuOpen(false);
-                    }}
-                    className="flex-1 rounded-full border border-slate-700 bg-slate-900/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-slate-200 hover:border-cyan-400/60 hover:text-cyan-100"
+                    style={{ background: "transparent", border: "0.5px solid rgba(200,169,110,0.2)", color: "#f0ede8" }}
+                    onClick={() => { router.push("/signin"); setMobileOpen(false); }}
                   >
                     Login
                   </button>
                   <button
-                    onClick={() => {
-                      router.push("/signup");
-                      setMobileMenuOpen(false);
-                    }}
-                    className="flex-1 rounded-full bg-gradient-to-r from-cyan-400 to-sky-400 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-slate-950 shadow-[0_0_18px_rgba(34,211,238,0.8)] hover:from-cyan-300 hover:to-sky-300"
+                    style={{ background: "#c8a96e", border: "none", color: "#080810" }}
+                    onClick={() => { router.push("/signup"); setMobileOpen(false); }}
                   >
                     Join
                   </button>
                 </div>
               )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.header>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.header>
+    </>
   );
 }
 
 function UserMenu({ user, signOut }: { user: any; signOut: () => void }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/80 p-1 pr-3 outline-none hover:border-cyan-400/70 hover:bg-slate-900 transition-all shadow-[0_0_18px_rgba(15,23,42,0.9)]">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-sky-400 text-slate-950 font-bold text-sm shadow-[0_0_18px_rgba(34,211,238,0.8)]">
-          {user.name?.[0] || <User size={16} />}
+      <DropdownMenuTrigger style={{
+        display: "flex", alignItems: "center", gap: 8,
+        background: "rgba(255,255,255,0.03)",
+        border: "0.5px solid rgba(200,169,110,0.2)",
+        borderRadius: 100, padding: "4px 12px 4px 4px",
+        outline: "none", cursor: "pointer",
+      }}>
+        <div style={{
+          width: 32, height: 32, borderRadius: "50%",
+          background: "#c8a96e",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: 13, fontWeight: 700, color: "#080810",
+        }}>
+          {user.name?.[0] || <User size={14} />}
         </div>
-        <span className="max-w-[120px] truncate text-sm font-semibold text-slate-100">
+        <span style={{ fontSize: 12, color: "#f0ede8", fontFamily: "'DM Sans', sans-serif" }}>
           {user.name}
         </span>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        className="w-56 border border-slate-800 bg-slate-950/95 text-slate-100 backdrop-blur-xl shadow-[0_20px_45px_rgba(15,23,42,1)]"
-      >
-        <DropdownMenuItem className="cursor-pointer gap-2 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-slate-200 focus:bg-slate-900/80">
+      <DropdownMenuContent align="end" style={{
+        background: "rgba(8,8,16,0.98)",
+        border: "0.5px solid rgba(200,169,110,0.15)",
+        borderRadius: 12,
+      }}>
+        <DropdownMenuItem style={{ fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: "#f0ede8" }}>
           Profile
         </DropdownMenuItem>
-        <DropdownMenuSeparator className="bg-slate-800" />
+        <DropdownMenuSeparator style={{ background: "rgba(200,169,110,0.1)" }} />
         <DropdownMenuItem
           onClick={signOut}
-          className="cursor-pointer gap-2 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-red-400 focus:bg-red-500/10"
+          style={{ fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: "#f87171" }}
         >
           Log out
         </DropdownMenuItem>
