@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/navbar";
 import { VersionFooter } from "@/components/version-footer";
-import { Gamepad2, Zap, Trophy, Play, Cpu, Star } from "lucide-react";
+import { Cpu, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const games = [
@@ -60,7 +60,10 @@ export default function HomePage() {
     const checkUnlock = () => {
       const now = new Date();
       const parts = new Intl.DateTimeFormat("en-US", {
-        timeZone: "America/New_York", hour12: false, hour: "2-digit", minute: "2-digit",
+        timeZone: "America/New_York",
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
       }).formatToParts(now);
       const hour = parseInt(parts.find((p) => p.type === "hour")?.value ?? "0", 10);
       const minute = parseInt(parts.find((p) => p.type === "minute")?.value ?? "0", 10);
@@ -74,8 +77,10 @@ export default function HomePage() {
   const filteredGames = games.filter((game) => {
     const q = searchQuery.toLowerCase();
     const matchesSearch =
-      game.name.toLowerCase().includes(q) || game.description?.toLowerCase().includes(q);
-    const matchesCategory = activeCategory === "All" || game.category === activeCategory;
+      game.name.toLowerCase().includes(q) ||
+      game.description?.toLowerCase().includes(q);
+    const matchesCategory =
+      activeCategory === "All" || game.category === activeCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -106,11 +111,7 @@ export default function HomePage() {
           background: radial-gradient(ellipse, rgba(200,169,110,0.05) 0%, transparent 70%);
           pointer-events: none; z-index: 0;
         }
-
-        /* CLICK TRAIL */
         .gb-trail { pointer-events: none; position: fixed; inset: 0; z-index: 5; }
-
-        /* TERMS MODAL */
         .gb-overlay {
           position: fixed; inset: 0; z-index: 50;
           display: flex; align-items: center; justify-content: center;
@@ -134,32 +135,32 @@ export default function HomePage() {
         }
         .gb-modal-body {
           font-size: 13px; line-height: 1.7; color: #7a7a8c;
-          max-height: 40vh; overflow-y: auto;
-          margin-bottom: 2rem;
+          max-height: 40vh; overflow-y: auto; margin-bottom: 2rem;
         }
-        .gb-modal-body strong { color: #c8a96e; display: block; margin-top: 1rem; margin-bottom: 0.25rem; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; }
-        .gb-modal-actions { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+        .gb-modal-body strong {
+          color: #c8a96e; display: block;
+          margin-top: 1rem; margin-bottom: 0.25rem;
+          font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+        }
+        .gb-modal-actions {
+          display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+        }
         .gb-enter-btn {
           font-family: 'DM Sans', sans-serif;
           font-size: 11px; font-weight: 700;
           letter-spacing: 0.2em; text-transform: uppercase;
-          color: #080810;
-          background: #c8a96e;
+          color: #080810; background: #c8a96e;
           border: none; border-radius: 100px;
           padding: 10px 28px; cursor: pointer;
           transition: background 0.2s;
         }
         .gb-enter-btn:hover { background: #e8c87e; }
         .gb-modal-hint { font-size: 10px; color: #7a7a8c; }
-
-        /* SCANNING OVERLAY */
         .gb-scan-bar {
           height: 4px; width: 100%;
           background: rgba(255,255,255,0.06);
           border-radius: 100px; overflow: hidden; margin-top: 1rem;
         }
-
-        /* HERO */
         .gb-hero {
           position: relative; z-index: 1;
           padding: 9rem 3rem 4rem;
@@ -194,30 +195,27 @@ export default function HomePage() {
           font-family: 'DM Mono', monospace;
           font-size: 11px; color: #7a7a8c; letter-spacing: 0.1em;
         }
-        .gb-count strong { color: #c8a96e; font-size: 24px; font-weight: 400; margin-right: 4px; vertical-align: middle; }
+        .gb-count strong {
+          color: #c8a96e; font-size: 24px; font-weight: 400;
+          margin-right: 4px; vertical-align: middle;
+        }
         .gb-divider { width: 1px; height: 32px; background: rgba(200,169,110,0.3); }
         .gb-engine {
           display: flex; align-items: center; gap: 8px;
           font-family: 'DM Mono', monospace;
           font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
         }
-        .gb-engine-dot {
-          width: 8px; height: 8px; border-radius: 50%;
-        }
+        .gb-engine-dot { width: 8px; height: 8px; border-radius: 50%; }
         .gb-engine-dot.stable { background: #6ee7b7; box-shadow: 0 0 8px rgba(110,231,183,0.6); }
         .gb-engine-dot.unstable { background: #f87171; box-shadow: 0 0 8px rgba(248,113,113,0.6); animation: gbPulse 1s infinite; }
         .gb-engine-label.stable { color: #6ee7b7; }
         .gb-engine-label.unstable { color: #f87171; }
-
-        /* SECTION LINE */
         .gb-line {
           position: relative; z-index: 1;
           margin: 0 3rem; height: 0.5px;
           background: linear-gradient(90deg, rgba(200,169,110,0.3), transparent);
           animation: gbFadeIn 0.6s ease forwards 0.6s; opacity: 0;
         }
-
-        /* FILTERS */
         .gb-filters {
           position: relative; z-index: 1;
           padding: 2rem 3rem 0;
@@ -244,8 +242,6 @@ export default function HomePage() {
           background: rgba(200,169,110,0.1);
           color: #c8a96e;
         }
-
-        /* GRID */
         .gb-grid {
           position: relative; z-index: 1;
           padding: 2rem 3rem 6rem;
@@ -254,8 +250,6 @@ export default function HomePage() {
           gap: 1px;
           background: rgba(200,169,110,0.08);
         }
-
-        /* CARD */
         .gb-card {
           background: #080810;
           padding: 2.5rem;
@@ -265,17 +259,16 @@ export default function HomePage() {
           opacity: 0; transform: translateY(20px);
           transition: background 0.4s ease;
         }
-        .gb-card:nth-child(1)  { animation: gbFadeUp 0.5s ease forwards 0.8s; }
+        .gb-card:nth-child(1)  { animation: gbFadeUp 0.5s ease forwards 0.80s; }
         .gb-card:nth-child(2)  { animation: gbFadeUp 0.5s ease forwards 0.85s; }
-        .gb-card:nth-child(3)  { animation: gbFadeUp 0.5s ease forwards 0.9s; }
+        .gb-card:nth-child(3)  { animation: gbFadeUp 0.5s ease forwards 0.90s; }
         .gb-card:nth-child(4)  { animation: gbFadeUp 0.5s ease forwards 0.95s; }
-        .gb-card:nth-child(5)  { animation: gbFadeUp 0.5s ease forwards 1.0s; }
+        .gb-card:nth-child(5)  { animation: gbFadeUp 0.5s ease forwards 1.00s; }
         .gb-card:nth-child(6)  { animation: gbFadeUp 0.5s ease forwards 1.05s; }
-        .gb-card:nth-child(7)  { animation: gbFadeUp 0.5s ease forwards 1.1s; }
+        .gb-card:nth-child(7)  { animation: gbFadeUp 0.5s ease forwards 1.10s; }
         .gb-card:nth-child(8)  { animation: gbFadeUp 0.5s ease forwards 1.15s; }
-        .gb-card:nth-child(9)  { animation: gbFadeUp 0.5s ease forwards 1.2s; }
+        .gb-card:nth-child(9)  { animation: gbFadeUp 0.5s ease forwards 1.20s; }
         .gb-card:nth-child(n+10) { animation: gbFadeUp 0.5s ease forwards 1.25s; }
-
         .gb-card::before {
           content: '';
           position: absolute; inset: 0;
@@ -288,7 +281,6 @@ export default function HomePage() {
         .gb-card:hover .gb-card-number { color: #c8a96e; }
         .gb-card:hover .gb-card-arrow { transform: translate(4px, -4px); opacity: 1; }
         .gb-card:hover .gb-card-play { background: #c8a96e; color: #080810; }
-
         .gb-card-topline {
           position: absolute; top: 0; left: 0;
           height: 1px; width: 0; background: #c8a96e;
@@ -350,8 +342,6 @@ export default function HomePage() {
           font-size: 14px; color: #c8a96e;
           opacity: 0.4; transition: transform 0.3s, opacity 0.3s;
         }
-
-        /* EMPTY */
         .gb-empty {
           position: relative; z-index: 1;
           padding: 8rem 3rem; text-align: center;
@@ -362,8 +352,6 @@ export default function HomePage() {
           font-size: 2rem; color: #7a7a8c; margin-bottom: 0.5rem;
         }
         .gb-empty-sub { font-size: 13px; color: #7a7a8c; opacity: 0.5; }
-
-        /* LOCKED SCREEN */
         .gb-locked {
           position: relative; z-index: 1;
           min-height: 100vh;
@@ -383,9 +371,10 @@ export default function HomePage() {
           color: #f0ede8; margin-bottom: 1rem;
         }
         .gb-locked-title span { color: #c8a96e; }
-        .gb-locked-desc { font-size: 14px; color: #7a7a8c; max-width: 400px; line-height: 1.7; margin-bottom: 2rem; }
-
-        /* ANIMATIONS */
+        .gb-locked-desc {
+          font-size: 14px; color: #7a7a8c;
+          max-width: 400px; line-height: 1.7; margin-bottom: 2rem;
+        }
         @keyframes gbFadeUp {
           from { opacity: 0; transform: translateY(20px); }
           to   { opacity: 1; transform: translateY(0); }
@@ -410,6 +399,7 @@ export default function HomePage() {
       `}</style>
 
       <div className="gb-root">
+
         {/* CLICK TRAIL */}
         <div className="gb-trail">
           <AnimatePresence>
@@ -432,7 +422,9 @@ export default function HomePage() {
           {showTerms && (
             <motion.div
               className="gb-overlay"
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
             >
               <motion.div
                 className="gb-modal"
@@ -444,13 +436,17 @@ export default function HomePage() {
                 <h2>Access Conditions</h2>
                 <div className="gb-modal-body">
                   <strong>Disclaimer</strong>
-                  This portal is designed for independent use only. By continuing, you acknowledge that you are responsible for how and where you access this content.
+                  This portal is designed for independent use only. By continuing, you acknowledge
+                  that you are responsible for how and where you access this content.
                   <strong>Usage Restrictions</strong>
-                  Do not present or distribute this portal in environments where it is not allowed. Always follow your local rules and guidelines.
+                  Do not present or distribute this portal in environments where it is not allowed.
+                  Always follow your local rules and guidelines.
                   <strong>Responsibility</strong>
-                  You assume full responsibility for any consequences that may occur if these conditions are ignored.
+                  You assume full responsibility for any consequences that may occur if these
+                  conditions are ignored.
                   <strong>Agreement</strong>
-                  By selecting "Enter Site", you confirm that you understand and agree to these conditions.
+                  By selecting "Enter Site", you confirm that you understand and agree to these
+                  conditions.
                 </div>
                 <div className="gb-modal-actions">
                   <button
@@ -475,7 +471,9 @@ export default function HomePage() {
           {searching && (
             <motion.div
               className="gb-overlay"
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
             >
               <motion.div
                 className="gb-modal"
@@ -544,30 +542,30 @@ export default function HomePage() {
             {/* GRID */}
             {filteredGames.length > 0 ? (
               <div className="gb-grid">
-              {filteredGames.map((game, i) => (
-  
-                  key={game.name}
-                  href={game.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="gb-card"
-                >
-                  <div className="gb-card-topline" />
-                  <div className="gb-card-header">
-                    <div className="gb-card-number">{pad(i + 1)}</div>
-                    <div className="gb-card-badges">
-                      {game.hot && <span className="gb-hot-badge">⚡ Hot</span>}
-                      <span className="gb-cat-badge">{game.category}</span>
+                {filteredGames.map((game, i) => (
+                  
+                    key={game.name}
+                    href={game.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="gb-card"
+                  >
+                    <div className="gb-card-topline" />
+                    <div className="gb-card-header">
+                      <div className="gb-card-number">{pad(i + 1)}</div>
+                      <div className="gb-card-badges">
+                        {game.hot && <span className="gb-hot-badge">⚡ Hot</span>}
+                        <span className="gb-cat-badge">{game.category}</span>
+                      </div>
                     </div>
-                  </div>
-                  <h2 className="gb-card-name">{game.name}</h2>
-                  <p className="gb-card-desc">{game.description}</p>
-                  <div className="gb-card-footer">
-                    <span className="gb-card-play">▶ Play</span>
-                    <div className="gb-card-arrow">↗</div>
-                  </div>
-                </a>
-              ))}
+                    <h2 className="gb-card-name">{game.name}</h2>
+                    <p className="gb-card-desc">{game.description}</p>
+                    <div className="gb-card-footer">
+                      <span className="gb-card-play">▶ Play</span>
+                      <div className="gb-card-arrow">↗</div>
+                    </div>
+                  </a>
+                ))}
               </div>
             ) : (
               <div className="gb-empty">
@@ -598,6 +596,7 @@ export default function HomePage() {
             </div>
           </div>
         )}
+
       </div>
     </>
   );
