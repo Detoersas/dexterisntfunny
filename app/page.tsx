@@ -5,454 +5,600 @@ import { Navbar } from "@/components/navbar";
 import { VersionFooter } from "@/components/version-footer";
 import { Gamepad2, Zap, Trophy, Play, Cpu, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
 
 const games = [
   { name: "archive games", url: "https://thebasicss.vercel.app", description: "my own selection of games", category: "Premium", hot: true },
-  { name: "babydoll games", url: "https://thebasicsss.vercel.app", description: "monkeygg", category: "=fun", hot: false },
-  { name: "supernova", url: "https://sites.google.com/beaufortschools.org/supernova/home", description: "coming soon", category: "SCHOOL LOCATED", hot: true },
+  { name: "babydoll games", url: "https://thebasicsss.vercel.app", description: "monkeygg", category: "Fun", hot: false },
+  { name: "supernova", url: "https://sites.google.com/beaufortschools.org/supernova/home", description: "coming soon", category: "School", hot: true },
   { name: "Seraph", url: "https://basicsssss.vercel.app", description: "BEST OF THE BEST", category: "Premium", hot: true },
-  { name: "games123", url: "https://notepad-40.a.ssl.fastly.net", description: "Fast-loading Nexora mirror with premium game collection", category: "New" },
-  { name: "Geometry dash", url: "https://basicsssss.vercel.app/games/gdlite/index.html", description: "FAST GEOMETRY DASH", category: "Classic", hot: true },
-  { name: "LUNAR", url: "https://lunar-nu.vercel.app", description: "Home of Retro Bowl and classic sports games", category: "Sports" },
-  { name: "ROMS", url: "https://gba.vercel.app", description: "Play classic GBA and retro console games in your browser", category: "Retro" },
-  { name: "COPPER", url: "https://clever-schools.vercel.app", description: "Clean interface with hand-picked quality games", category: "Premium" },
-  { name: "SELENITE", url: "https://selenite-beta.vercel.app", description: "Huge library with hundreds of titles to explore", category: "Library" },
-  { name: "MORE-LESS", url: "https://the-more-less-game-nuxt.vercel.app", description: "Challenging number guessing game - test your intuition", category: "Indie" },
-  { name: "MINECRAFT", url: "https://supanoob.vercel.app", description: "Play Minecraft 1.9 directly in your browser", category: "Classic", hot: true },
-  { name: "BEANSITE", url: "https://mb7.vercel.app", description: "Lightweight game portal with fast load times", category: "New" },
-  { name: "???", url: "https://rule34dle.vercel.app", description: "Mystery guessing game with unique gameplay mechanics", category: "Indie" },
-  { name: "PETEZAH", url: "https://thepetezah.vercel.app", description: "Community favorite with classic and modern games", category: "Classic" },
-  { name: "STRANGE ROPE POLICE", url: "https://amazing-strange-rope-police.vercel.app", description: "Open-world action combining GTA with superhero powers", category: "Action", hot: true },
-  { name: "VOTE", url: "https://gameboys.vercel.app/order/new", description: "Support the community - vote for your favorite games", category: "Social" },
-  { name: "GN Math", url: "https://thebasic.vercel.app", description: "Has if not the best game catalog ever", category: "Premium", hot: true },
+  { name: "games123", url: "https://notepad-40.a.ssl.fastly.net", description: "Fast-loading mirror with premium game collection", category: "New", hot: false },
+  { name: "Geometry Dash", url: "https://basicsssss.vercel.app/games/gdlite/index.html", description: "Fast Geometry Dash in your browser", category: "Classic", hot: true },
+  { name: "Lunar", url: "https://lunar-nu.vercel.app", description: "Home of Retro Bowl and classic sports games", category: "Sports", hot: false },
+  { name: "ROMS", url: "https://gba.vercel.app", description: "Play classic GBA and retro console games in your browser", category: "Retro", hot: false },
+  { name: "Copper", url: "https://clever-schools.vercel.app", description: "Clean interface with hand-picked quality games", category: "Premium", hot: false },
+  { name: "Selenite", url: "https://selenite-beta.vercel.app", description: "Huge library with hundreds of titles to explore", category: "Library", hot: false },
+  { name: "More-Less", url: "https://the-more-less-game-nuxt.vercel.app", description: "Challenging number guessing game — test your intuition", category: "Indie", hot: false },
+  { name: "Minecraft", url: "https://supanoob.vercel.app", description: "Play Minecraft 1.9 directly in your browser", category: "Classic", hot: true },
+  { name: "Beansite", url: "https://mb7.vercel.app", description: "Lightweight game portal with fast load times", category: "New", hot: false },
+  { name: "???", url: "https://rule34dle.vercel.app", description: "Mystery guessing game with unique gameplay mechanics", category: "Indie", hot: false },
+  { name: "Petezah", url: "https://thepetezah.vercel.app", description: "Community favorite with classic and modern games", category: "Classic", hot: false },
+  { name: "Strange Rope Police", url: "https://amazing-strange-rope-police.vercel.app", description: "Open-world action combining GTA with superhero powers", category: "Action", hot: true },
+  { name: "Vote", url: "https://gameboys.vercel.app/order/new", description: "Support the community — vote for your favorite games", category: "Social", hot: false },
+  { name: "GN Math", url: "https://thebasic.vercel.app", description: "Has the best game catalog ever assembled", category: "Premium", hot: true },
 ];
+
+function pad(n: number) {
+  return String(n).padStart(2, "0");
+}
+
+const categories = ["All", "Premium", "Classic", "New", "Sports", "Retro", "Indie", "Action"];
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
-  const [clicks, setClicks] = useState<{ id: number; x: number; y: number }[]>([]);
   const [engineStatus, setEngineStatus] = useState<"STABLE" | "UNSTABLE">("STABLE");
-
-  // Terms popup state
   const [showTerms, setShowTerms] = useState(true);
-
-  // Fake "searching the web" overlay state
   const [searching, setSearching] = useState(false);
-
-  // Time gate – page only usable after 3:45 PM Eastern
   const [timeUnlocked, setTimeUnlocked] = useState(false);
+  const [clicks, setClicks] = useState<{ id: number; x: number; y: number }[]>([]);
 
-  // 50/50 random engine status on load
   useEffect(() => {
-    const randomStatus = Math.random() < 0.5 ? "STABLE" : "UNSTABLE";
-    setEngineStatus(randomStatus);
+    setEngineStatus(Math.random() < 0.5 ? "STABLE" : "UNSTABLE");
   }, []);
 
-  // Click trail (changed color + animation style)
   useEffect(() => {
     const handleGlobalClick = (e: MouseEvent) => {
       const newClick = { id: Date.now(), x: e.clientX, y: e.clientY };
       setClicks((prev) => [...prev, newClick]);
-      setTimeout(() => {
-        setClicks((prev) => prev.filter((c) => c.id !== newClick.id));
-      }, 600);
+      setTimeout(() => setClicks((prev) => prev.filter((c) => c.id !== newClick.id)), 600);
     };
-
     window.addEventListener("click", handleGlobalClick);
     return () => window.removeEventListener("click", handleGlobalClick);
   }, []);
 
-  // Time gate: unlock at 3:45 PM Eastern (America/New_York)
   useEffect(() => {
     const checkUnlock = () => {
       const now = new Date();
-      const options: Intl.DateTimeFormatOptions = {
-        timeZone: "America/New_York",
-        hour12: false,
-        hour: "2-digit",
-        minute: "2-digit",
-      };
-
-      const formatter = new Intl.DateTimeFormat("en-US", options);
-      const parts = formatter.formatToParts(now);
-
-      const hourStr = parts.find((p) => p.type === "hour")?.value ?? "00";
-      const minuteStr = parts.find((p) => p.type === "minute")?.value ?? "00";
-
-      const hour = parseInt(hourStr, 10);
-      const minute = parseInt(minuteStr, 10);
-
-      if (hour > 10 || (hour === 10 && minute >= 45)) {
-        setTimeUnlocked(true);
-      } else {
-        setTimeUnlocked(false);
-      }
+      const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/New_York", hour12: false, hour: "2-digit", minute: "2-digit",
+      }).formatToParts(now);
+      const hour = parseInt(parts.find((p) => p.type === "hour")?.value ?? "0", 10);
+      const minute = parseInt(parts.find((p) => p.type === "minute")?.value ?? "0", 10);
+      setTimeUnlocked(hour > 10 || (hour === 10 && minute >= 45));
     };
-
     checkUnlock();
-    const interval = setInterval(checkUnlock, 60 * 1000);
+    const interval = setInterval(checkUnlock, 60000);
     return () => clearInterval(interval);
   }, []);
-
-  const categories = ["All", "Premium", "Classic", "New", "Sports", "Retro"];
 
   const filteredGames = games.filter((game) => {
     const q = searchQuery.toLowerCase();
     const matchesSearch =
-      game.name.toLowerCase().includes(q) ||
-      game.description?.toLowerCase().includes(q);
+      game.name.toLowerCase().includes(q) || game.description?.toLowerCase().includes(q);
     const matchesCategory = activeCategory === "All" || game.category === activeCategory;
     return matchesSearch && matchesCategory;
   });
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-100 overflow-x-hidden selection:bg-cyan-400 selection:text-slate-900">
-      {/* CLICK TRAIL */}
-      <div className="pointer-events-none fixed inset-0 z-[5]">
-        <AnimatePresence>
-          {clicks.map((click) => (
-            <motion.div
-              key={click.id}
-              initial={{ opacity: 0.6, scale: 0.2, y: 0 }}
-              animate={{ opacity: 0, scale: 1.5, y: -40 }}
-              exit={{ opacity: 0 }}
-              style={{ left: click.x - 10, top: click.y - 10, position: "absolute" }}
-              className="text-cyan-300 drop-shadow-[0_0_12px_rgba(34,211,238,0.9)]"
-            >
-              <Star size={20} fill="currentColor" />
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap');
 
-      {/* BACKGROUND GRADIENTS */}
-      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-40 -left-32 h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl" />
-        <div className="absolute bottom-[-6rem] right-[-4rem] h-80 w-80 rounded-full bg-indigo-500/20 blur-3xl" />
-        <div className="absolute inset-x-0 top-1/3 mx-auto h-40 w-[70%] rounded-full bg-sky-500/10 blur-3xl" />
-      </div>
+        .gb-root {
+          font-family: 'DM Sans', sans-serif;
+          background: #080810;
+          color: #f0ede8;
+          min-height: 100vh;
+          overflow-x: hidden;
+          position: relative;
+        }
+        .gb-root::before {
+          content: '';
+          position: fixed; top: -30%; left: -20%;
+          width: 70%; height: 70%;
+          background: radial-gradient(ellipse, rgba(100,80,180,0.07) 0%, transparent 70%);
+          pointer-events: none; z-index: 0;
+        }
+        .gb-root::after {
+          content: '';
+          position: fixed; bottom: -20%; right: -10%;
+          width: 60%; height: 60%;
+          background: radial-gradient(ellipse, rgba(200,169,110,0.05) 0%, transparent 70%);
+          pointer-events: none; z-index: 0;
+        }
 
-      {/* TERMS POPUP */}
-      <AnimatePresence>
-        {showTerms && (
-          <motion.div
-            className="fixed inset-0 z-[50] flex items-center justify-center bg-black/70 backdrop-blur-md"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 16 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 16 }}
-              className="relative w-[95%] max-w-lg rounded-3xl border border-slate-700/60 bg-slate-950/90 p-6 sm:p-8 shadow-[0_0_40px_rgba(15,23,42,0.9)]"
-            >
-              <div className="mb-4 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-400">
-                  <Star className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-300/80">
-                    System Notice
-                  </p>
-                  <p className="text-xs text-slate-400">Important terms before entering the SITE.</p>
-                </div>
-              </div>
+        /* CLICK TRAIL */
+        .gb-trail { pointer-events: none; position: fixed; inset: 0; z-index: 5; }
 
-              <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-50 mb-3">
-                Access Conditions
-              </h2>
+        /* TERMS MODAL */
+        .gb-overlay {
+          position: fixed; inset: 0; z-index: 50;
+          display: flex; align-items: center; justify-content: center;
+          background: rgba(0,0,0,0.75); backdrop-filter: blur(16px);
+        }
+        .gb-modal {
+          width: 95%; max-width: 500px;
+          background: rgba(8,8,16,0.95);
+          border: 0.5px solid rgba(200,169,110,0.2);
+          border-radius: 24px;
+          padding: 2.5rem;
+        }
+        .gb-modal-eyebrow {
+          font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+          color: #c8a96e; margin-bottom: 0.5rem;
+        }
+        .gb-modal h2 {
+          font-family: 'Playfair Display', serif;
+          font-size: 2rem; font-weight: 900;
+          color: #f0ede8; margin-bottom: 1.5rem;
+        }
+        .gb-modal-body {
+          font-size: 13px; line-height: 1.7; color: #7a7a8c;
+          max-height: 40vh; overflow-y: auto;
+          margin-bottom: 2rem;
+        }
+        .gb-modal-body strong { color: #c8a96e; display: block; margin-top: 1rem; margin-bottom: 0.25rem; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; }
+        .gb-modal-actions { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+        .gb-enter-btn {
+          font-family: 'DM Sans', sans-serif;
+          font-size: 11px; font-weight: 700;
+          letter-spacing: 0.2em; text-transform: uppercase;
+          color: #080810;
+          background: #c8a96e;
+          border: none; border-radius: 100px;
+          padding: 10px 28px; cursor: pointer;
+          transition: background 0.2s;
+        }
+        .gb-enter-btn:hover { background: #e8c87e; }
+        .gb-modal-hint { font-size: 10px; color: #7a7a8c; }
 
-              <div className="space-y-3 text-xs sm:text-sm leading-relaxed text-slate-300 max-h-[50vh] overflow-y-auto pr-1">
-                <p className="font-semibold text-cyan-300">Disclaimer</p>
-                <p>
-                  This portal is designed for independent use only. By continuing, you acknowledge
-                  that you are responsible for how and where you access this content.
-                </p>
+        /* SCANNING OVERLAY */
+        .gb-scan-bar {
+          height: 4px; width: 100%;
+          background: rgba(255,255,255,0.06);
+          border-radius: 100px; overflow: hidden; margin-top: 1rem;
+        }
 
-                <p className="font-semibold text-cyan-300">Usage Restrictions</p>
-                <p>
-                  Do not present or distribute this portal in environments where it is not allowed.
-                  Always follow your local rules and guidelines.
-                </p>
+        /* HERO */
+        .gb-hero {
+          position: relative; z-index: 1;
+          padding: 9rem 3rem 4rem;
+        }
+        .gb-eyebrow {
+          font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase;
+          color: #c8a96e; margin-bottom: 1.5rem;
+          display: flex; align-items: center; gap: 12px;
+          animation: gbFadeUp 0.6s ease forwards 0.1s; opacity: 0;
+        }
+        .gb-eyebrow::before {
+          content: ''; display: inline-block;
+          width: 32px; height: 1px; background: #c8a96e;
+        }
+        .gb-title {
+          font-family: 'Playfair Display', serif;
+          font-size: clamp(5rem, 12vw, 10rem);
+          font-weight: 900; line-height: 0.9; letter-spacing: -0.02em;
+          animation: gbFadeUp 0.8s ease forwards 0.25s; opacity: 0;
+        }
+        .gb-title .solid { color: #f0ede8; }
+        .gb-title .outline {
+          -webkit-text-stroke: 1px rgba(200,169,110,0.4);
+          color: transparent;
+        }
+        .gb-meta {
+          margin-top: 2.5rem;
+          display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
+          animation: gbFadeUp 0.6s ease forwards 0.45s; opacity: 0;
+        }
+        .gb-count {
+          font-family: 'DM Mono', monospace;
+          font-size: 11px; color: #7a7a8c; letter-spacing: 0.1em;
+        }
+        .gb-count strong { color: #c8a96e; font-size: 24px; font-weight: 400; margin-right: 4px; vertical-align: middle; }
+        .gb-divider { width: 1px; height: 32px; background: rgba(200,169,110,0.3); }
+        .gb-engine {
+          display: flex; align-items: center; gap: 8px;
+          font-family: 'DM Mono', monospace;
+          font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+        }
+        .gb-engine-dot {
+          width: 8px; height: 8px; border-radius: 50%;
+        }
+        .gb-engine-dot.stable { background: #6ee7b7; box-shadow: 0 0 8px rgba(110,231,183,0.6); }
+        .gb-engine-dot.unstable { background: #f87171; box-shadow: 0 0 8px rgba(248,113,113,0.6); animation: gbPulse 1s infinite; }
+        .gb-engine-label.stable { color: #6ee7b7; }
+        .gb-engine-label.unstable { color: #f87171; }
 
-                <p className="font-semibold text-cyan-300">Responsibility</p>
-                <p>
-                  You assume full responsibility for any consequences that may occur if these
-                  conditions are ignored.
-                </p>
+        /* SECTION LINE */
+        .gb-line {
+          position: relative; z-index: 1;
+          margin: 0 3rem; height: 0.5px;
+          background: linear-gradient(90deg, rgba(200,169,110,0.3), transparent);
+          animation: gbFadeIn 0.6s ease forwards 0.6s; opacity: 0;
+        }
 
-                <p className="font-semibold text-cyan-300">Agreement</p>
-                <p>
-                  By selecting "Enter Vault", you confirm that you understand and agree to these
-                  conditions.
-                </p>
-              </div>
+        /* FILTERS */
+        .gb-filters {
+          position: relative; z-index: 1;
+          padding: 2rem 3rem 0;
+          display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+          animation: gbFadeUp 0.5s ease forwards 0.7s; opacity: 0;
+        }
+        .gb-filter-label {
+          font-family: 'DM Mono', monospace;
+          font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+          color: #7a7a8c;
+        }
+        .gb-filter-btn {
+          font-family: 'DM Sans', sans-serif;
+          font-size: 10px; font-weight: 500;
+          letter-spacing: 0.15em; text-transform: uppercase;
+          padding: 6px 14px; border-radius: 100px;
+          border: 0.5px solid rgba(200,169,110,0.15);
+          background: transparent; color: #7a7a8c;
+          cursor: pointer; transition: all 0.2s;
+        }
+        .gb-filter-btn:hover { color: #f0ede8; border-color: rgba(200,169,110,0.3); }
+        .gb-filter-btn.active {
+          border-color: #c8a96e;
+          background: rgba(200,169,110,0.1);
+          color: #c8a96e;
+        }
 
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <button
-                  onClick={() => {
-                    setShowTerms(false);
-                    setSearching(true);
-                    setTimeout(() => {
-                      setSearching(false);
-                    }, 4000);
-                  }}
-                  className="w-full sm:w-auto rounded-full bg-cyan-400 px-6 py-2.5 text-xs font-black uppercase tracking-[0.18em] text-slate-900 shadow-[0_0_25px_rgba(34,211,238,0.7)] hover:bg-cyan-300 transition-colors"
-                >
-                  Enter Site
-                </button>
+        /* GRID */
+        .gb-grid {
+          position: relative; z-index: 1;
+          padding: 2rem 3rem 6rem;
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 1px;
+          background: rgba(200,169,110,0.08);
+        }
 
-                <p className="text-[10px] text-slate-500 text-center sm:text-right">
-                  If you disagree, close this tab.
-                </p>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        /* CARD */
+        .gb-card {
+          background: #080810;
+          padding: 2.5rem;
+          position: relative; overflow: hidden;
+          cursor: pointer; text-decoration: none;
+          color: inherit; display: block;
+          opacity: 0; transform: translateY(20px);
+          transition: background 0.4s ease;
+        }
+        .gb-card:nth-child(1)  { animation: gbFadeUp 0.5s ease forwards 0.8s; }
+        .gb-card:nth-child(2)  { animation: gbFadeUp 0.5s ease forwards 0.85s; }
+        .gb-card:nth-child(3)  { animation: gbFadeUp 0.5s ease forwards 0.9s; }
+        .gb-card:nth-child(4)  { animation: gbFadeUp 0.5s ease forwards 0.95s; }
+        .gb-card:nth-child(5)  { animation: gbFadeUp 0.5s ease forwards 1.0s; }
+        .gb-card:nth-child(6)  { animation: gbFadeUp 0.5s ease forwards 1.05s; }
+        .gb-card:nth-child(7)  { animation: gbFadeUp 0.5s ease forwards 1.1s; }
+        .gb-card:nth-child(8)  { animation: gbFadeUp 0.5s ease forwards 1.15s; }
+        .gb-card:nth-child(9)  { animation: gbFadeUp 0.5s ease forwards 1.2s; }
+        .gb-card:nth-child(n+10) { animation: gbFadeUp 0.5s ease forwards 1.25s; }
 
-      {/* FAKE "SEARCHING" OVERLAY */}
-      <AnimatePresence>
-        {searching && (
-          <motion.div
-            className="fixed inset-0 z-[40] flex items-center justify-center bg-slate-950/90 backdrop-blur-lg"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="w-[90%] max-w-md rounded-3xl border border-slate-700/60 bg-slate-900/90 p-7 shadow-[0_0_45px_rgba(15,23,42,0.9)]"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-10 w-10 rounded-2xl bg-cyan-500/10 flex items-center justify-center">
-                  <Cpu className="h-6 w-6 text-cyan-400" />
-                </div>
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-cyan-300/80">
-                    Checking IP status
-                  </p>
-                  <p className="text-xs text-slate-400">
-                    Calibrating connection and scanning your environment…
-                  </p>
-                </div>
-              </div>
+        .gb-card::before {
+          content: '';
+          position: absolute; inset: 0;
+          background: linear-gradient(135deg, rgba(200,169,110,0.04) 0%, transparent 60%);
+          opacity: 0; transition: opacity 0.4s;
+        }
+        .gb-card:hover { background: #0d0d1a; }
+        .gb-card:hover::before { opacity: 1; }
+        .gb-card:hover .gb-card-topline { width: 100%; }
+        .gb-card:hover .gb-card-number { color: #c8a96e; }
+        .gb-card:hover .gb-card-arrow { transform: translate(4px, -4px); opacity: 1; }
+        .gb-card:hover .gb-card-play { background: #c8a96e; color: #080810; }
 
-              <div className="mt-2 mb-5">
-                <p className="text-xs font-medium text-slate-200 mb-2">
-                  Checking to see if you are in School zones accross the USA.
-                </p>
-                <div className="h-1.5 w-full rounded-full bg-slate-700/60 overflow-hidden">
-                  <motion.div
-                    className="h-full w-1/3 bg-gradient-to-r from-cyan-400 via-sky-300 to-cyan-400"
-                    animate={{ x: ["-100%", "100%"] }}
-                    transition={{ repeat: Infinity, duration: 1.4, ease: "easeInOut" }}
-                  />
-                </div>
-              </div>
+        .gb-card-topline {
+          position: absolute; top: 0; left: 0;
+          height: 1px; width: 0; background: #c8a96e;
+          transition: width 0.4s ease;
+        }
+        .gb-card-header {
+          display: flex; align-items: flex-start; justify-content: space-between;
+          margin-bottom: 1.5rem;
+        }
+        .gb-card-number {
+          font-family: 'DM Mono', monospace;
+          font-size: 11px; color: #7a7a8c;
+          letter-spacing: 0.15em; transition: color 0.3s;
+        }
+        .gb-card-badges { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+        .gb-hot-badge {
+          font-size: 9px; font-weight: 700;
+          letter-spacing: 0.2em; text-transform: uppercase;
+          color: #fb923c;
+          border: 0.5px solid rgba(251,146,60,0.4);
+          background: rgba(251,146,60,0.08);
+          padding: 3px 8px; border-radius: 100px;
+        }
+        .gb-cat-badge {
+          font-family: 'DM Mono', monospace;
+          font-size: 9px; color: #7a7a8c;
+          letter-spacing: 0.15em; text-transform: uppercase;
+        }
+        .gb-card-name {
+          font-family: 'Playfair Display', serif;
+          font-size: 1.6rem; font-weight: 700;
+          line-height: 1.1; margin-bottom: 0.75rem;
+          letter-spacing: -0.01em; color: #f0ede8;
+        }
+        .gb-card-desc {
+          font-size: 12px; color: #7a7a8c;
+          line-height: 1.7; margin-bottom: 2rem;
+        }
+        .gb-card-footer {
+          display: flex; align-items: center; justify-content: space-between;
+        }
+        .gb-card-play {
+          font-family: 'DM Sans', sans-serif;
+          font-size: 10px; font-weight: 700;
+          letter-spacing: 0.2em; text-transform: uppercase;
+          color: #c8a96e;
+          border: 0.5px solid rgba(200,169,110,0.3);
+          background: transparent; border-radius: 100px;
+          padding: 7px 16px; cursor: pointer;
+          text-decoration: none;
+          transition: background 0.2s, color 0.2s;
+          display: inline-flex; align-items: center; gap: 6px;
+        }
+        .gb-card-arrow {
+          width: 32px; height: 32px;
+          border: 0.5px solid rgba(200,169,110,0.3);
+          border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 14px; color: #c8a96e;
+          opacity: 0.4; transition: transform 0.3s, opacity 0.3s;
+        }
 
-              <div className="mt-4 flex justify-between text-[10px] text-slate-500">
-                <span>Simulated scan</span>
-                <span>Do not close this tab</span>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        /* EMPTY */
+        .gb-empty {
+          position: relative; z-index: 1;
+          padding: 8rem 3rem; text-align: center;
+        }
+        .gb-empty-icon { font-size: 48px; opacity: 0.15; margin-bottom: 1.5rem; }
+        .gb-empty-title {
+          font-family: 'Playfair Display', serif;
+          font-size: 2rem; color: #7a7a8c; margin-bottom: 0.5rem;
+        }
+        .gb-empty-sub { font-size: 13px; color: #7a7a8c; opacity: 0.5; }
 
-      {/* MAIN CONTENT */}
-      {timeUnlocked ? (
-        <>
-          <Navbar onSearch={setSearchQuery} searchQuery={searchQuery} />
+        /* LOCKED SCREEN */
+        .gb-locked {
+          position: relative; z-index: 1;
+          min-height: 100vh;
+          display: flex; flex-direction: column;
+          align-items: center; justify-content: center;
+          text-align: center; padding: 2rem;
+        }
+        .gb-locked-eyebrow {
+          font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+          color: #c8a96e; margin-bottom: 1.5rem;
+          display: flex; align-items: center; gap: 10px;
+        }
+        .gb-locked-title {
+          font-family: 'Playfair Display', serif;
+          font-size: clamp(2.5rem, 6vw, 4.5rem);
+          font-weight: 900; line-height: 1.05;
+          color: #f0ede8; margin-bottom: 1rem;
+        }
+        .gb-locked-title span { color: #c8a96e; }
+        .gb-locked-desc { font-size: 14px; color: #7a7a8c; max-width: 400px; line-height: 1.7; margin-bottom: 2rem; }
 
-          <main className="relative mx-auto max-w-6xl px-4 pb-12 pt-10 sm:px-6 lg:px-8">
-            {/* TOP SECTION */}
-            <div className="mb-10 grid gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,1.3fr)] md:items-end">
-              <div>
-                <div className="hidden inline-flex items-center gap-2 rounded-full border border-cyan-500/40 bg-cyan-500/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-cyan-300 mb-3">
-                  <Trophy className="h-3.5 w-3.5" />
-                  <span>Game Hub</span>
-                </div>
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight">
-                  <span className="text-slate-50">Game</span>
-                  <span className="bg-gradient-to-r from-cyan-400 to-sky-300 bg-clip-text text-transparent">
-                    BOYS
-                  </span>
-                </h1>
-                <p className="mt-3 max-w-xl text-sm sm:text-base text-slate-400">
-                  NOT FOR SCHOOL USAGE
-                </p>
-              </div>
+        /* ANIMATIONS */
+        @keyframes gbFadeUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes gbFadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @keyframes gbPulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+        @keyframes gbScan {
+          0%   { transform: translateX(-100%); }
+          100% { transform: translateX(400%); }
+        }
+        .gb-scan-inner {
+          height: 100%; width: 25%; border-radius: 100px;
+          background: linear-gradient(90deg, transparent, #c8a96e, transparent);
+          animation: gbScan 1.4s ease-in-out infinite;
+        }
+      `}</style>
 
-              <div className="flex flex-col gap-3 md:items-end">
-                <div className="flex items-center gap-3 self-stretch md:self-auto">
-                  <div className="flex-1 rounded-2xl border border-slate-700/70 bg-slate-900/60 p-4 shadow-inner">
-                    <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
-                      <span className="inline-flex items-center gap-1">
-                        <Cpu className="h-3.5 w-3.5 text-cyan-400" />
-                        Engine
-                      </span>
-                      <span className="text-[10px] uppercase tracking-[0.18em] text-slate-500">
-                        ?
-                      </span>
-                    </div>
-                    <div
-                      className={cn(
-                        "inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold tracking-[0.15em] uppercase",
-                        engineStatus === "STABLE"
-                          ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/40"
-                          : "bg-red-500/15 text-red-300 border border-red-500/40 animate-pulse"
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          "h-2 w-2 rounded-full",
-                          engineStatus === "STABLE" ? "bg-emerald-400" : "bg-red-400"
-                        )}
-                      />
-                      {engineStatus}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* CATEGORY FILTERS */}
-            <div className="mb-6 flex flex-wrap items-center gap-3">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                Filters
-              </span>
-              <div className="flex flex-wrap gap-2">
-                {categories.map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setActiveCategory(cat)}
-                    className={cn(
-                      "rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] transition-all",
-                      activeCategory === cat
-                        ? "border-cyan-400 bg-cyan-500/20 text-cyan-100 shadow-[0_0_18px_rgba(34,211,238,0.35)]"
-                        : "border-slate-700/70 bg-slate-900/60 text-slate-400 hover:text-slate-100 hover:border-cyan-400/60"
-                    )}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* GAME GRID */}
-            <AnimatePresence mode="popLayout">
+      <div className="gb-root">
+        {/* CLICK TRAIL */}
+        <div className="gb-trail">
+          <AnimatePresence>
+            {clicks.map((click) => (
               <motion.div
-                layout
-                className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+                key={click.id}
+                initial={{ opacity: 0.7, scale: 0.2, y: 0 }}
+                animate={{ opacity: 0, scale: 1.5, y: -40 }}
+                exit={{ opacity: 0 }}
+                style={{ left: click.x - 10, top: click.y - 10, position: "absolute" }}
               >
-                {filteredGames.map((game) => (
-                  <motion.div
-                    layout
-                    key={game.name}
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    whileHover={{ y: -8 }}
-                    className="group relative flex flex-col justify-between rounded-2xl border border-slate-800/80 bg-slate-900/70 p-5 shadow-[0_18px_40px_rgba(15,23,42,0.7)] transition-all hover:border-cyan-400/70 hover:bg-slate-900"
-                  >
-                    <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-cyan-500/15 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-
-                    <div className="mb-4 flex items-start justify-between gap-3">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-800/80 text-cyan-300 shadow-inner">
-                        <Gamepad2 className="h-7 w-7" />
-                      </div>
-
-                      <div className="flex flex-col items-end gap-1">
-                        {game.hot && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-orange-500/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.14em] text-orange-300 border border-orange-400/40">
-                            <Zap className="h-3 w-3 fill-orange-300" /> HOT
-                          </span>
-                        )}
-                        <span className="text-[9px] font-semibold uppercase tracking-[0.16em] text-slate-500">
-                          {game.category}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <h3 className="text-lg font-black tracking-tight text-slate-50 group-hover:text-cyan-100">
-                        {game.name}
-                      </h3>
-                      <p className="text-xs leading-relaxed text-slate-400 group-hover:text-slate-200 line-clamp-3">
-                        {game.description}
-                      </p>
-                    </div>
-
-                    <div className="mt-5 flex items-center justify-between">
-                      <a
-                        href={game.url}
-                        target="_blank"
-                        className="group/play inline-flex items-center gap-2 rounded-lg bg-cyan-500/15 px-3.5 py-1.5 text-[11px] font-black uppercase tracking-[0.16em] text-cyan-200 hover:bg-cyan-400 hover:text-slate-900 shadow-md transition-all"
-                      >
-                        <span>Play</span>
-                        <Play className="h-3.5 w-3.5 group-hover/play:translate-x-0.5 transition-transform" />
-                      </a>
-
-                      <div className="flex flex-col items-end">
-                        <span className="text-[9px] text-slate-500 uppercase tracking-[0.16em]">
-                          Activity
-                        </span>
-                        <div className="mt-1 h-1.5 w-16 rounded-full bg-slate-800 overflow-hidden">
-                          <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-cyan-400 to-sky-400 group-hover:w-full transition-all duration-500" />
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+                <Star size={18} fill="#c8a96e" color="#c8a96e" />
               </motion.div>
-            </AnimatePresence>
-          </main>
-
-          <VersionFooter />
-        </>
-      ) : (
-        // LOCKED SCREEN
-        <div className="relative mx-auto flex min-h-screen max-w-2xl flex-col items-center justify-center px-4 text-center">
-          <div className="mb-6 flex items-center gap-3 text-cyan-300">
-            <Gamepad2 className="h-7 w-7" />
-            <span className="text-[11px] font-black uppercase tracking-[0.26em] text-cyan-400/80">
-              Access Locked
-            </span>
-          </div>
-
-          <h1 className="mb-3 text-3xl sm:text-4xl font-black tracking-tight text-slate-50">
-            Portal opens at
-            <span className="ml-2 bg-gradient-to-r from-cyan-400 to-sky-300 bg-clip-text text-transparent">
-              3:45 PM Eastern
-            </span>
-          </h1>
-
-          <p className="mb-6 max-w-md text-sm sm:text-base text-slate-400">
-            GAMEVAULT services are offline until the scheduled window. The index, search, and launch
-            buttons will activate once the timer completes.
-          </p>
-
-          <div className="flex flex-col items-center gap-3 text-xs text-slate-500">
-            <div className="flex items-center gap-2">
-              <Cpu className="h-4 w-4 text-cyan-400" />
-              <span>Waiting for boot sequence…</span>
-            </div>
-
-            <div className="h-1 w-44 rounded-full bg-slate-800 overflow-hidden">
-              <motion.div
-                className="h-full w-1/2 bg-gradient-to-r from-cyan-400 to-sky-500"
-                animate={{ x: ["-100%", "100%"] }}
-                transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-              />
-            </div>
-          </div>
+            ))}
+          </AnimatePresence>
         </div>
-      )}
-    </div>
+
+        {/* TERMS OVERLAY */}
+        <AnimatePresence>
+          {showTerms && (
+            <motion.div
+              className="gb-overlay"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            >
+              <motion.div
+                className="gb-modal"
+                initial={{ scale: 0.92, opacity: 0, y: 16 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.92, opacity: 0, y: 16 }}
+              >
+                <p className="gb-modal-eyebrow">System Notice</p>
+                <h2>Access Conditions</h2>
+                <div className="gb-modal-body">
+                  <strong>Disclaimer</strong>
+                  This portal is designed for independent use only. By continuing, you acknowledge that you are responsible for how and where you access this content.
+                  <strong>Usage Restrictions</strong>
+                  Do not present or distribute this portal in environments where it is not allowed. Always follow your local rules and guidelines.
+                  <strong>Responsibility</strong>
+                  You assume full responsibility for any consequences that may occur if these conditions are ignored.
+                  <strong>Agreement</strong>
+                  By selecting "Enter Site", you confirm that you understand and agree to these conditions.
+                </div>
+                <div className="gb-modal-actions">
+                  <button
+                    className="gb-enter-btn"
+                    onClick={() => {
+                      setShowTerms(false);
+                      setSearching(true);
+                      setTimeout(() => setSearching(false), 4000);
+                    }}
+                  >
+                    Enter Site
+                  </button>
+                  <span className="gb-modal-hint">If you disagree, close this tab.</span>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* SCANNING OVERLAY */}
+        <AnimatePresence>
+          {searching && (
+            <motion.div
+              className="gb-overlay"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            >
+              <motion.div
+                className="gb-modal"
+                initial={{ scale: 0.92, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.92, opacity: 0 }}
+              >
+                <p className="gb-modal-eyebrow">Checking IP status</p>
+                <h2>Scanning…</h2>
+                <p style={{ fontSize: 13, color: "#7a7a8c", marginBottom: "1.5rem", lineHeight: 1.7 }}>
+                  Checking to see if you are in school zones across the USA.
+                </p>
+                <div className="gb-scan-bar">
+                  <div className="gb-scan-inner" />
+                </div>
+                <p style={{ fontSize: 10, color: "#7a7a8c", marginTop: "1rem", letterSpacing: "0.1em" }}>
+                  Do not close this tab
+                </p>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {timeUnlocked ? (
+          <>
+            <Navbar onSearch={setSearchQuery} searchQuery={searchQuery} />
+
+            {/* HERO */}
+            <section className="gb-hero">
+              <p className="gb-eyebrow">Game Hub</p>
+              <h1 className="gb-title">
+                <span className="solid">Game</span>
+                <span className="outline">Boys</span>
+              </h1>
+              <div className="gb-meta">
+                <div className="gb-count">
+                  <strong>{filteredGames.length}</strong>
+                  {filteredGames.length !== 1 ? " games available" : " game available"}
+                </div>
+                <div className="gb-divider" />
+                <div className="gb-engine">
+                  <span className={`gb-engine-dot ${engineStatus === "STABLE" ? "stable" : "unstable"}`} />
+                  <span className={`gb-engine-label ${engineStatus === "STABLE" ? "stable" : "unstable"}`}>
+                    Engine {engineStatus}
+                  </span>
+                </div>
+              </div>
+            </section>
+
+            <div className="gb-line" />
+
+            {/* FILTERS */}
+            <div className="gb-filters">
+              <span className="gb-filter-label">Filter</span>
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  className={`gb-filter-btn ${activeCategory === cat ? "active" : ""}`}
+                  onClick={() => setActiveCategory(cat)}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {/* GRID */}
+            {filteredGames.length > 0 ? (
+              <div className="gb-grid">
+                {filteredGames.map((game, i) => (
+                  
+                    key={game.name}
+                    href={game.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="gb-card"
+                  >
+                    <div className="gb-card-topline" />
+                    <div className="gb-card-header">
+                      <div className="gb-card-number">{pad(i + 1)}</div>
+                      <div className="gb-card-badges">
+                        {game.hot && <span className="gb-hot-badge">⚡ Hot</span>}
+                        <span className="gb-cat-badge">{game.category}</span>
+                      </div>
+                    </div>
+                    <h2 className="gb-card-name">{game.name}</h2>
+                    <p className="gb-card-desc">{game.description}</p>
+                    <div className="gb-card-footer">
+                      <span className="gb-card-play">▶ Play</span>
+                      <div className="gb-card-arrow">↗</div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <div className="gb-empty">
+                <div className="gb-empty-icon">◎</div>
+                <h2 className="gb-empty-title">Nothing found</h2>
+                <p className="gb-empty-sub">Try a different search or filter</p>
+              </div>
+            )}
+
+            <VersionFooter />
+          </>
+        ) : (
+          <div className="gb-locked">
+            <p className="gb-locked-eyebrow">
+              <Cpu size={16} color="#c8a96e" /> Access Locked
+            </p>
+            <h1 className="gb-locked-title">
+              Portal opens at<br />
+              <span>3:45 PM Eastern</span>
+            </h1>
+            <p className="gb-locked-desc">
+              GameBoys services are offline until the scheduled window. The index, search,
+              and launch buttons will activate once the timer completes.
+            </p>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, color: "#7a7a8c", fontSize: 12 }}>
+              <Cpu size={14} color="#c8a96e" />
+              <span style={{ letterSpacing: "0.1em" }}>Waiting for boot sequence…</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
