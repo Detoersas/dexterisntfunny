@@ -75,3 +75,5 @@ This ZIP contains the launcher build and installer package.
 ### Clone the repo:
 ```bash
 git clone https://github.com/dexterminatorog/Jennylauncher-gameloader-browser.git
+
+____
