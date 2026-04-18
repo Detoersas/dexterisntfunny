@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>JennyLauncher — Install</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <div class="bg-orbit"></div>
+  <div class="scanline"></div>
+
+  <div class="page">
+    <header class="nav">
+      <div class="nav-left">
+        <div class="logo-chip">
+          <span class="logo-main">JL</span>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">JennyLauncher</span>
+          <span class="logo-sub">by foidstudios</span>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#install">Install</a>
+        <a href="#about">About</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-left">
+          <h1>Boot your own game hub.</h1>
+          <p>
+            JennyLauncher is a custom Windows launcher with a built‑in store browser,
+            red‑accented UI, and a layout that feels like a dedicated game console shell.
+          </p>
+
+          <div class="hero-actions" id="install">
+            <a href="{{ download_url }}" class="btn-install" download="JennyLauncher.zip">
+              <span class="btn-label">INSTALL JENNYLAUNCHER</span>
+              <span class="btn-sub">Windows 10/11 · 64‑bit</span>
+            </a>
+            <span class="hero-note">No ads. No telemetry. Just your games.</span>
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <div class="launcher-frame">
+            <div class="frame-header">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+              <span class="frame-title">JENNYLAUNCHER // GAMES · STORE</span>
+            </div>
+            <div class="frame-body">
+              <aside class="frame-sidebar">
+                <div class="side-item active">GAMES</div>
+                <div class="side-item">STORE</div>
+                <div class="side-item">SETTINGS</div>
+              </aside>
+              <section class="frame-main">
+                <div class="pill-row">
+                  <span class="pill">Matrix boot</span>
+                  <span class="pill">Hex window</span>
+                  <span class="pill">JennyPay mock</span>
+                </div>
+                <div class="tile-grid">
+                  <div class="tile">
+                    <div class="tile-title">Fortnite</div>
+                    <div class="tile-sub">Installed · Ready</div>
+                    <button class="tile-btn">PLAY</button>
+                  </div>
+                  <div class="tile">
+                    <div class="tile-title">Valorant</div>
+                    <div class="tile-sub">Installed · Ready</div>
+                    <button class="tile-btn">PLAY</button>
+                  </div>
+                  <div class="tile">
+                    <div class="tile-title">Custom EXE</div>
+                    <div class="tile-sub">Added manually</div>
+                    <button class="tile-btn">PLAY</button>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+          <p class="hero-caption">
+            A compact launcher shell with a split between your games and an embedded store view.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="features">
+        <h2>Why JennyLauncher feels different</h2>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <h3>Game‑first layout</h3>
+            <p>Tiles, not clutter. Your main games front and center with clean PLAY actions.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Embedded store</h3>
+            <p>WebView2 store view that never escapes the launcher window. No browser tab chaos.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Red console aesthetic</h3>
+            <p>Dark base, neon red edges, and a subtle matrix‑style motion in the background.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Simple install path</h3>
+            <p>Download, run, play. No account wall, no launcher inside a launcher.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="about">
+        <h2>Under the hood</h2>
+        <p class="section-text">
+          JennyLauncher is built in C# with WebView2, using a custom window shape, animated boot screen,
+          and a fake JennyPay flow for flavor. This site is powered by Python + Flask, serving a single
+          focused page that matches the launcher’s vibe.
+        </p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>JennyLauncher by foidstudios</span>
+      <span>Launcher UI concept by Dexter</span>
+    </footer>
+  </div>
+</body>
+</html>
