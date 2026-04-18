@@ -70,9 +70,6 @@ This ZIP contains the launcher build and installer package.
 - Windows 10 or 11 (64‑bit)  
 - WebView2 Runtime (usually already installed)  
 
----
-
-
 ## 🛠️ Development
 
 ### Clone the repo:
