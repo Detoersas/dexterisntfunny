@@ -72,6 +72,7 @@ This ZIP contains the launcher build and installer package.
 
 ---
 
+
 ## 🛠️ Development
 
 ### Clone the repo:
